@@ -1,10 +1,16 @@
 /* src/styles/Variables.css */
 :root {
   --primary: #E30613;      /* Rojo Salud Madrid */
+  --primary-hover: #b3050f; /* Un tono más oscuro para el hover de botones */
   --secondary: #00568F;    /* Azul Sanidad */
+  --accent-mental: #6c5ce7; /* Un color diferencial para el módulo de Salud Mental */
+  
   --bg-light: #F8F9FA;
   --text-dark: #1A1A1A;
+  --text-muted: #666666;   /* Para descripciones secundarias */
+  
   --white: #ffffff;
   --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   --border-radius: 12px;
+  --transition: all 0.3s ease; /* Para que las animaciones sean suaves */
 }
