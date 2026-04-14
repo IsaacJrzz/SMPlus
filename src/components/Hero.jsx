@@ -32,10 +32,27 @@ const Hero = () => {
 
         {/* LADO DERECHO: MOCKUP DE LA APP */}
         <div className="hero-mockup-side">
-          <div className="mockup-container">
-            <div className="mockup-img-wrapper">
-              {/* Aquí irá tu imagen real: <img src="/mockup.png" alt="App Mockup" /> */}
-              <p className="mockup-text-placeholder">Tu Mockup Aquí</p>
+          <div className="phone-float-wrapper">
+            {/* BISEL DEL TELÉFONO */}
+            <div className="phone-bezel">
+              {/* Zona superior: Dynamic Island */}
+              <div className="phone-notch">
+                <div className="phone-dynamic-island"></div>
+              </div>
+
+              {/* Pantalla (iframe escalado) */}
+              <div className="phone-screen-clip">
+                <iframe
+                  src="/SaludMadrid_Prototipo_v3.html"
+                  className="phone-embed"
+                  title="SaludMadrid+ App"
+                  scrolling="no"
+                  frameBorder="0"
+                />
+              </div>
+
+              {/* Barra home inferior */}
+              <div className="phone-home-bar"></div>
             </div>
           </div>
         </div>

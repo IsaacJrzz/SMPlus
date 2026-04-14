@@ -1,0 +1,3362 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SaludMadrid+ Prototipo v2</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        background: #0f1623;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        gap: 16px;
+      }
+
+      /* ── BREADCRUMB EXTERIOR ── */
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 12px;
+        max-width: 390px;
+        width: 100%;
+        padding: 0 4px;
+      }
+      .breadcrumb span {
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .breadcrumb .sep {
+        opacity: 0.4;
+      }
+
+      /* ── DEVICE ── */
+      .device {
+        width: 390px;
+        height: 844px;
+        background: #f0f4f8;
+        border-radius: 50px;
+        overflow: hidden;
+        position: relative;
+        box-shadow:
+          0 40px 100px rgba(0, 0, 0, 0.7),
+          inset 0 0 0 1.5px rgba(255, 255, 255, 0.1),
+          inset 0 0 0 3px #222;
+      }
+
+      /* ── STATUS BAR ── */
+      .status-bar {
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #fff;
+        position: relative;
+        z-index: 10;
+        flex-shrink: 0;
+      }
+      .status-bar.dark {
+        color: #111;
+      }
+      .status-icons {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        font-size: 11px;
+      }
+
+      /* ── SCREENS ── */
+      .screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: none;
+        flex-direction: column;
+        animation: none;
+      }
+      .screen.active {
+        display: flex;
+      }
+      .screen.slide-in {
+        animation: slideIn 0.22s ease-out;
+      }
+      .screen.slide-back {
+        animation: slideBack 0.22s ease-out;
+      }
+      @keyframes slideIn {
+        from {
+          transform: translateX(30px);
+          opacity: 0.6;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      @keyframes slideBack {
+        from {
+          transform: translateX(-20px);
+          opacity: 0.6;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* ── NAV BAR ── */
+      .nav-bar {
+        height: 82px;
+        background: #fff;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        align-items: flex-start;
+        padding-top: 10px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        flex-shrink: 0;
+      }
+      .nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        cursor: pointer;
+        font-size: 9px;
+        color: #9ca3af;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 2px 0;
+      }
+      .nav-item.active {
+        color: #003da5;
+      }
+      .nav-icon-wrap {
+        width: 40px;
+        height: 26px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        transition: background 0.15s;
+      }
+      .nav-item.active .nav-icon-wrap {
+        background: #eff6ff;
+      }
+
+      /* ── TOP BAR CON BACK ── */
+      .top-bar {
+        background: #fff;
+        padding: 12px 16px 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid #f3f4f6;
+        flex-shrink: 0;
+      }
+      .back-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #f0f4f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 16px;
+        border: none;
+        flex-shrink: 0;
+      }
+      .top-bar-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #111;
+      }
+
+      /* TSI center nav */
+      .nav-item.tsi-center {
+        position: relative;
+        top: -12px;
+      }
+      .nav-icon-wrap.tsi-bubble {
+        width: 52px;
+        height: 36px;
+        border-radius: 18px;
+        box-shadow: 0 4px 16px rgba(0, 61, 165, 0.4);
+        transition: all 0.2s;
+        border: 2px solid rgba(255, 255, 255, 0.8);
+      }
+      .nav-item.tsi-center span {
+        font-size: 8px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+      }
+      /* Nav bar improved */
+      .nav-bar {
+        height: 86px;
+        padding-top: 8px;
+        border-top: none;
+        box-shadow:
+          0 -1px 0 rgba(0, 0, 0, 0.06),
+          0 -4px 20px rgba(0, 0, 0, 0.06);
+      }
+
+      /* scrollable content */
+      .scroll {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .scroll::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* ── SHARED ── */
+      .card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 16px;
+        margin: 0 16px 12px;
+      }
+      .btn-primary {
+        background: #003da5;
+        color: #fff;
+        border: none;
+        border-radius: 14px;
+        padding: 15px;
+        font-size: 15px;
+        font-weight: 600;
+        width: 100%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: opacity 0.15s;
+      }
+      .btn-primary:active {
+        opacity: 0.85;
+      }
+      .btn-outline {
+        background: #fff;
+        color: #003da5;
+        border: 2px solid #003da5;
+        border-radius: 14px;
+        padding: 13px;
+        font-size: 15px;
+        font-weight: 600;
+        width: 100%;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+      .chip-blue {
+        background: #eff6ff;
+        color: #1d4ed8;
+      }
+      .chip-green {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .chip-orange {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .chip-gray {
+        background: #f3f4f6;
+        color: #6b7280;
+      }
+      .chip-red {
+        background: #fef2f2;
+        color: #991b1b;
+      }
+      .section-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #9ca3af;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        margin: 16px 16px 8px;
+      }
+
+      /* ══════════════════════════════════
+   LOGIN
+══════════════════════════════════ */
+      #login {
+        background: #fff;
+      }
+      .login-hero {
+        background: linear-gradient(
+          160deg,
+          #002d7a 0%,
+          #003da5 40%,
+          #0060cc 100%
+        );
+        height: 320px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 0 32px;
+        position: relative;
+        overflow: hidden;
+      }
+      .login-hero::before {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        border: 60px solid rgba(255, 255, 255, 0.04);
+        top: -80px;
+        right: -80px;
+      }
+      .login-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .login-logo-icon {
+        width: 64px;
+        height: 64px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+      }
+      .login-logo-text {
+        color: #fff;
+      }
+      .login-logo-text .m {
+        font-size: 36px;
+        font-weight: 900;
+        line-height: 1;
+      }
+      .login-logo-text .plus {
+        color: #ff4d5a;
+      }
+      .login-logo-text .sub {
+        font-size: 12px;
+        letter-spacing: 2.5px;
+        opacity: 0.85;
+        font-weight: 400;
+      }
+      .login-badge {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        padding: 5px 14px;
+        color: #fff;
+        font-size: 11px;
+        margin-top: 4px;
+      }
+      .login-tagline {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 15px;
+      }
+      .login-body {
+        padding: 24px 24px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        flex: 1;
+      }
+      .login-section-label {
+        font-size: 10px;
+        font-weight: 700;
+        color: #9ca3af;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+      .login-link {
+        text-align: center;
+        color: #003da5;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        padding: 14px 0;
+      }
+      .login-footer {
+        text-align: center;
+        color: #c4c9d4;
+        font-size: 10px;
+        padding: 12px 24px;
+        border-top: 1px solid #f3f4f6;
+      }
+
+      /* ══════════════════════════════════
+   DASHBOARD
+══════════════════════════════════ */
+      #dashboard {
+        background: #f0f4f8;
+      }
+      .dash-header {
+        background: linear-gradient(175deg, #003da5 0%, #0060cc 100%);
+        padding: 0 20px 20px;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .dash-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-top: 6px;
+      }
+      .dash-greeting {
+        font-size: 22px;
+        font-weight: 700;
+      }
+      .dash-date {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.75);
+        margin-top: 1px;
+      }
+      .dash-bell {
+        position: relative;
+        cursor: pointer;
+        font-size: 22px;
+      }
+      .dash-bell-dot {
+        position: absolute;
+        top: -1px;
+        right: -1px;
+        width: 9px;
+        height: 9px;
+        background: #ff4d5a;
+        border-radius: 50%;
+        border: 2px solid #003da5;
+      }
+      .cita-card {
+        background: rgba(255, 255, 255, 0.13);
+        border-radius: 16px;
+        padding: 14px 16px;
+        margin: 12px 0 0;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      .cita-label {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: rgba(255, 255, 255, 0.7);
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .cita-badge {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 10px;
+      }
+      .cita-doc {
+        font-size: 19px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 4px;
+      }
+      .cita-esp {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.18);
+        color: #fff;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        margin-bottom: 10px;
+      }
+      .cita-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: rgba(255, 255, 255, 0.88);
+        font-size: 12px;
+        margin-bottom: 4px;
+      }
+      .cita-btns {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .cita-btn {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+        border-radius: 10px;
+        padding: 9px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+      .emoji-row {
+        display: flex;
+        gap: 6px;
+      }
+      .emoji-btn {
+        flex: 1;
+        height: 44px;
+        border-radius: 12px;
+        border: 1.5px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        cursor: pointer;
+        background: #f9fafb;
+        transition: all 0.15s;
+      }
+      .emoji-btn.sel {
+        border-color: #6b21a8;
+        background: #faf5ff;
+        transform: scale(1.08);
+      }
+      .med-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f3f4f6;
+      }
+      .med-item:last-child {
+        border-bottom: none;
+      }
+      .med-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+      .med-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #111;
+      }
+      .med-sub {
+        font-size: 11px;
+        color: #6b7280;
+        margin-top: 2px;
+      }
+      .result-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+      }
+      .result-icon {
+        width: 40px;
+        height: 40px;
+        background: #eff6ff;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+
+      /* ══════════════════════════════════
+   NOTIFICACIONES
+══════════════════════════════════ */
+      #notificaciones {
+        background: #f0f4f8;
+      }
+      .notif-item {
+        display: flex;
+        gap: 12px;
+        padding: 14px 16px;
+        background: #fff;
+        margin: 0 16px 8px;
+        border-radius: 14px;
+        cursor: pointer;
+      }
+      .notif-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-top: 5px;
+      }
+      .notif-dot.blue {
+        background: #003da5;
+      }
+      .notif-dot.purple {
+        background: #7c3aed;
+      }
+      .notif-dot.green {
+        background: #16a34a;
+      }
+      .notif-dot.orange {
+        background: #f59e0b;
+      }
+      .notif-dot.gray {
+        background: #d1d5db;
+      }
+      .notif-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #111;
+      }
+      .notif-body {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 2px;
+        line-height: 1.4;
+      }
+      .notif-time {
+        font-size: 10px;
+        color: #9ca3af;
+        margin-top: 4px;
+      }
+
+      /* ══════════════════════════════════
+   CITAS
+══════════════════════════════════ */
+      #citas {
+        background: #f0f4f8;
+      }
+      .citas-header {
+        background: #fff;
+        padding: 12px 16px;
+        flex-shrink: 0;
+      }
+      .citas-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 4px;
+      }
+      .page-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #111;
+      }
+      .fab-round {
+        width: 36px;
+        height: 36px;
+        background: #00a9a5;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 22px;
+        cursor: pointer;
+        border: none;
+        flex-shrink: 0;
+      }
+      .search-bar {
+        background: #f0f4f8;
+        border-radius: 12px;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+        color: #9ca3af;
+        font-size: 13px;
+      }
+      .filter-row {
+        display: flex;
+        gap: 8px;
+        padding: 10px 16px 4px;
+        flex-shrink: 0;
+      }
+      .filter-btn {
+        padding: 7px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1.5px solid #e5e7eb;
+        background: #fff;
+        color: #6b7280;
+        transition: all 0.15s;
+      }
+      .filter-btn.active {
+        background: #003da5;
+        color: #fff;
+        border-color: #003da5;
+      }
+      .appt-card {
+        margin: 0 16px 10px;
+        background: #fff;
+        border-radius: 14px;
+        padding: 14px;
+        border-left: 4px solid #003da5;
+      }
+      .appt-card.pend {
+        border-left-color: #f59e0b;
+      }
+      .appt-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .appt-doc {
+        font-size: 14px;
+        font-weight: 700;
+        color: #111;
+      }
+      .appt-detail {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #6b7280;
+        margin-bottom: 4px;
+      }
+      .appt-actions {
+        display: flex;
+        gap: 6px;
+        margin-top: 10px;
+      }
+      .appt-btn {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1.5px solid;
+      }
+      .btn-mod {
+        border-color: #003da5;
+        color: #003da5;
+        background: #eff6ff;
+      }
+      .btn-can {
+        border-color: #e63946;
+        color: #e63946;
+        background: #fef2f2;
+      }
+      .btn-rut {
+        border-color: #0f766e;
+        color: #0f766e;
+        background: #ccfbf1;
+      }
+      .hist-card {
+        margin: 0 16px 6px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 12px 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .hist-doc {
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+      }
+      .hist-date {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-top: 2px;
+      }
+      .fab-bottom {
+        position: absolute;
+        bottom: 90px;
+        left: 16px;
+        right: 16px;
+        background: #00a9a5;
+        color: #fff;
+        border: none;
+        border-radius: 14px;
+        padding: 15px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 4px 20px rgba(0, 169, 165, 0.35);
+        z-index: 50;
+      }
+
+      /* ══════════════════════════════════
+   NUEVA CITA
+══════════════════════════════════ */
+      #nueva-cita {
+        background: #f0f4f8;
+      }
+      .steps {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        background: #fff;
+        flex-shrink: 0;
+      }
+      .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        flex: 1;
+      }
+      .step-circle {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .step-circle.done {
+        background: #00a9a5;
+        color: #fff;
+      }
+      .step-circle.active {
+        background: #003da5;
+        color: #fff;
+      }
+      .step-circle.todo {
+        background: #e5e7eb;
+        color: #9ca3af;
+      }
+      .step-label {
+        font-size: 9px;
+        color: #9ca3af;
+        font-weight: 600;
+      }
+      .step-label.active {
+        color: #003da5;
+      }
+      .step-line {
+        height: 2px;
+        flex: 1;
+        background: #e5e7eb;
+        margin-bottom: 12px;
+      }
+      .step-line.done {
+        background: #00a9a5;
+      }
+      .step-line.active {
+        background: #003da5;
+      }
+      .sel-info {
+        margin: 10px 16px;
+        background: #eff6ff;
+        border-radius: 12px;
+        padding: 11px 14px;
+        font-size: 12px;
+        color: #374151;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid #bfdbfe;
+      }
+      .cal-card {
+        margin: 0 16px 12px;
+        background: #fff;
+        border-radius: 16px;
+        padding: 14px;
+      }
+      .cal-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+      .cal-month {
+        font-size: 15px;
+        font-weight: 700;
+        color: #111;
+      }
+      .cal-arrow {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #f0f4f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 14px;
+        color: #6b7280;
+        border: none;
+      }
+      .cal-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 3px;
+      }
+      .cal-day-label {
+        text-align: center;
+        font-size: 10px;
+        font-weight: 700;
+        color: #9ca3af;
+        padding: 4px 0;
+      }
+      .cal-day {
+        text-align: center;
+        font-size: 12px;
+        padding: 7px 0;
+        border-radius: 8px;
+        cursor: pointer;
+        color: #374151;
+        font-weight: 500;
+        transition: background 0.1s;
+      }
+      .cal-day.empty {
+        color: #d1d5db;
+        cursor: default;
+      }
+      .cal-day.avail:hover {
+        background: #eff6ff;
+      }
+      .cal-day.sel {
+        background: #003da5;
+        color: #fff;
+        border-radius: 50%;
+        font-weight: 700;
+      }
+      .cal-day.dot::after {
+        content: "";
+        display: block;
+        width: 4px;
+        height: 4px;
+        background: #00a9a5;
+        border-radius: 50%;
+        margin: 1px auto 0;
+      }
+      .time-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin: 0 16px 12px;
+      }
+      .time-slot {
+        background: #fff;
+        border-radius: 10px;
+        padding: 11px;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 500;
+        color: #374151;
+        cursor: pointer;
+        border: 1.5px solid #e5e7eb;
+        transition: all 0.15s;
+      }
+      .time-slot.sel {
+        background: #003da5;
+        color: #fff;
+        border-color: #003da5;
+      }
+
+      /* ══════════════════════════════════
+   CONFIRMACIÓN CITA
+══════════════════════════════════ */
+      #confirmar-cita {
+        background: #f0f4f8;
+      }
+      .confirm-hero {
+        background: linear-gradient(160deg, #003da5, #0060cc);
+        padding: 40px 24px 30px;
+        text-align: center;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .confirm-check {
+        font-size: 56px;
+        margin-bottom: 10px;
+      }
+      .confirm-title {
+        font-size: 20px;
+        font-weight: 700;
+      }
+      .confirm-sub {
+        font-size: 13px;
+        opacity: 0.8;
+        margin-top: 4px;
+      }
+      .confirm-card {
+        margin: 16px;
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px;
+      }
+      .confirm-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #f3f4f6;
+      }
+      .confirm-row:last-child {
+        border-bottom: none;
+      }
+      .confirm-key {
+        font-size: 13px;
+        color: #6b7280;
+      }
+      .confirm-val {
+        font-size: 13px;
+        font-weight: 600;
+        color: #111;
+      }
+      .confirm-btns {
+        padding: 0 16px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      /* ══════════════════════════════════
+   TSI
+══════════════════════════════════ */
+      #tsi {
+        background: #f0f4f8;
+      }
+      .tsi-header {
+        background: #fff;
+        padding: 12px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+      }
+      .tsi-card-wrap {
+        padding: 16px;
+      }
+      .tsi-card {
+        background: linear-gradient(
+          135deg,
+          #002d7a 0%,
+          #003da5 50%,
+          #0072ce 80%,
+          #00a9a5 100%
+        );
+        border-radius: 20px;
+        padding: 18px 20px;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 12px 32px rgba(0, 61, 165, 0.45);
+        aspect-ratio: 1.586;
+      }
+      .tsi-card::before {
+        content: "";
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: 50px solid rgba(255, 255, 255, 0.05);
+        top: -60px;
+        right: -40px;
+      }
+      .tsi-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 18px;
+      }
+      .tsi-logo {
+        font-size: 18px;
+        font-weight: 900;
+      }
+      .tsi-logo span {
+        color: #ff4d5a;
+      }
+      .tsi-logo-sub {
+        font-size: 9px;
+        font-weight: 400;
+        opacity: 0.8;
+        margin-top: 1px;
+      }
+      .tsi-cm {
+        text-align: right;
+        font-size: 9px;
+        opacity: 0.85;
+      }
+      .tsi-cm b {
+        display: block;
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        margin-bottom: 2px;
+      }
+      .tsi-stars {
+        font-size: 11px;
+        letter-spacing: -1px;
+      }
+      .tsi-num {
+        font-size: 12px;
+        letter-spacing: 1.5px;
+        opacity: 0.85;
+        margin-bottom: 2px;
+        font-family: monospace;
+      }
+      .tsi-name {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin-top: 14px;
+      }
+      .tsi-btns {
+        display: flex;
+        gap: 8px;
+        padding: 0 16px 12px;
+      }
+      .tsi-btn {
+        flex: 1;
+        background: #fff;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 11px 6px;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 600;
+        color: #374151;
+        cursor: pointer;
+      }
+      .tsi-info-row {
+        display: flex;
+        padding: 0 16px;
+        gap: 8px;
+      }
+      .tsi-info-box {
+        flex: 1;
+        background: #fff;
+        border-radius: 12px;
+        padding: 14px 8px;
+        text-align: center;
+      }
+      .tsi-info-icon {
+        font-size: 20px;
+        margin-bottom: 4px;
+      }
+      .tsi-info-val {
+        font-size: 12px;
+        font-weight: 700;
+        color: #111;
+      }
+      .tsi-info-label {
+        font-size: 10px;
+        color: #9ca3af;
+        margin-top: 2px;
+      }
+
+      /* ══════════════════════════════════
+   BIENESTAR
+══════════════════════════════════ */
+      #bienestar {
+        background: #faf5ff;
+      }
+      .bien-header {
+        background: linear-gradient(160deg, #5b21b6, #7c3aed, #9333ea);
+        padding: 0 20px 18px;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .bien-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-top: 6px;
+      }
+      .bien-title {
+        font-size: 20px;
+        font-weight: 700;
+      }
+      .bien-sub {
+        font-size: 12px;
+        opacity: 0.8;
+        margin-top: 2px;
+      }
+      .mood-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+      .mood-dot {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+      }
+      .mood-day {
+        font-size: 9px;
+        color: #9ca3af;
+      }
+      .recurso-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 0 16px 12px;
+      }
+      .recurso-card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.15s;
+      }
+      .recurso-card:active {
+        transform: scale(0.97);
+      }
+      .recurso-icon {
+        font-size: 26px;
+        margin-bottom: 6px;
+      }
+      .recurso-name {
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .recurso-time {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-top: 2px;
+      }
+      .recurso-card.resp {
+        border-bottom: 3px solid #0072ce;
+      }
+      .recurso-card.resp .recurso-name {
+        color: #0072ce;
+      }
+      .recurso-card.mind {
+        border-bottom: 3px solid #7c3aed;
+      }
+      .recurso-card.mind .recurso-name {
+        color: #7c3aed;
+      }
+      .recurso-card.gad {
+        border-bottom: 3px solid #f59e0b;
+      }
+      .recurso-card.gad .recurso-name {
+        color: #f59e0b;
+      }
+      .recurso-card.phq {
+        border-bottom: 3px solid #e63946;
+      }
+      .recurso-card.phq .recurso-name {
+        color: #e63946;
+      }
+      .psico-btn {
+        margin: 0 16px 12px;
+        background: #7c3aed;
+        color: #fff;
+        border: none;
+        border-radius: 14px;
+        padding: 15px;
+        font-size: 14px;
+        font-weight: 600;
+        width: calc(100% - 32px);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .crisis-banner {
+        margin: 0 16px 12px;
+        background: #e63946;
+        border-radius: 14px;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .crisis-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .crisis-sub {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.9);
+        margin-top: 2px;
+      }
+      .crisis-call {
+        width: 38px;
+        height: 38px;
+        background: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      /* ══════════════════════════════════
+   TEST GAD/PHQ
+══════════════════════════════════ */
+      #test-salud {
+        background: #faf5ff;
+      }
+      .test-progress {
+        height: 4px;
+        background: #e5e7eb;
+        margin: 0 16px;
+        border-radius: 2px;
+      }
+      .test-progress-fill {
+        height: 100%;
+        background: #7c3aed;
+        border-radius: 2px;
+        transition: width 0.3s;
+      }
+      .test-q {
+        padding: 20px 16px 12px;
+      }
+      .test-q-num {
+        font-size: 11px;
+        font-weight: 700;
+        color: #7c3aed;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+      .test-q-text {
+        font-size: 16px;
+        font-weight: 600;
+        color: #111;
+        line-height: 1.4;
+      }
+      .test-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 0 16px;
+      }
+      .test-opt {
+        padding: 13px 16px;
+        background: #fff;
+        border-radius: 12px;
+        border: 1.5px solid #e5e7eb;
+        cursor: pointer;
+        font-size: 14px;
+        color: #374151;
+        font-weight: 500;
+        transition: all 0.15s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .test-opt.sel {
+        border-color: #7c3aed;
+        background: #f5f3ff;
+        color: #5b21b6;
+        font-weight: 600;
+      }
+      .test-opt.sel::after {
+        content: "✓";
+        color: #7c3aed;
+        font-weight: 700;
+      }
+
+      /* ══════════════════════════════════
+   HISTORIAL
+══════════════════════════════════ */
+      #historial {
+        background: #f0f4f8;
+      }
+      .hist-header-bar {
+        background: #fff;
+        padding: 10px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+      }
+      .hist-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px;
+        background: #fff;
+        margin: 0 16px 8px;
+        border-radius: 14px;
+        cursor: pointer;
+      }
+      .hist-icon-wrap {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+      .hist-icon-wrap.ana {
+        background: #eff6ff;
+      }
+      .hist-icon-wrap.inf {
+        background: #f0fdf4;
+      }
+      .hist-icon-wrap.vac {
+        background: #fef3c7;
+      }
+      .hist-info {
+        flex: 1;
+      }
+      .hist-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: #111;
+      }
+      .hist-meta {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-top: 2px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .hist-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .hist-btn {
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1.5px solid;
+      }
+      .btn-ver {
+        border-color: #003da5;
+        color: #003da5;
+        background: #eff6ff;
+      }
+      .btn-pdf {
+        border-color: #6b7280;
+        color: #6b7280;
+        background: #f9fafb;
+      }
+      .vacuna-chips {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        margin-top: 3px;
+      }
+      .vacuna-chip {
+        background: #dcfce7;
+        color: #166534;
+        padding: 2px 7px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 600;
+      }
+      .next-vac {
+        margin: 0 16px 12px;
+        background: #fef3c7;
+        border-radius: 12px;
+        padding: 11px 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: #92400e;
+      }
+
+      /* ══════════════════════════════════
+   DETALLE ANALÍTICA
+══════════════════════════════════ */
+      #detalle-analitica {
+        background: #f0f4f8;
+      }
+      .analitica-header {
+        background: #fff;
+        flex-shrink: 0;
+      }
+      .analitica-meta {
+        padding: 12px 16px 14px;
+      }
+      .analitica-fecha {
+        font-size: 12px;
+        color: #6b7280;
+      }
+      .analitica-estado {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #dcfce7;
+        color: #166534;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-top: 6px;
+      }
+      .param-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        background: #fff;
+        margin: 0 16px 6px;
+        border-radius: 12px;
+      }
+      .param-name {
+        flex: 1;
+        font-size: 13px;
+        font-weight: 600;
+        color: #111;
+      }
+      .param-val {
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .param-val.ok {
+        color: #166534;
+      }
+      .param-val.alt {
+        color: #e63946;
+      }
+      .param-ref {
+        font-size: 10px;
+        color: #9ca3af;
+        margin-top: 1px;
+      }
+      .semaforo {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .semaforo.green {
+        background: #16a34a;
+      }
+      .semaforo.yellow {
+        background: #f59e0b;
+      }
+      .semaforo.red {
+        background: #e63946;
+      }
+
+      /* ══════════════════════════════════
+   PERFIL
+══════════════════════════════════ */
+      #perfil {
+        background: #f0f4f8;
+      }
+      .perfil-hero {
+        background: linear-gradient(160deg, #002d7a, #003da5, #0060cc);
+        padding: 16px 20px 28px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .perfil-avatar {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: 700;
+        border: 2.5px solid rgba(255, 255, 255, 0.4);
+      }
+      .perfil-name {
+        font-size: 19px;
+        font-weight: 700;
+      }
+      .perfil-sub {
+        font-size: 12px;
+        opacity: 0.8;
+      }
+      .datos-card {
+        margin: 10px 16px 12px;
+        background: #fff;
+        border-radius: 16px;
+        padding: 16px;
+        position: relative;
+        z-index: 1;
+      }
+      .datos-label {
+        font-size: 10px;
+        font-weight: 700;
+        color: #9ca3af;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+      .datos-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 13px 0;
+        border-bottom: 1px solid #f3f4f6;
+      }
+      .datos-row:last-child {
+        border-bottom: none;
+      }
+      .datos-key {
+        font-size: 13px;
+        color: #6b7280;
+      }
+      .datos-val {
+        font-size: 13px;
+        font-weight: 600;
+        color: #111;
+      }
+      .datos-val.blue {
+        color: #003da5;
+      }
+      .config-item {
+        margin: 0 16px 6px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 13px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+      }
+      .config-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: #f0f4f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+      .config-label {
+        flex: 1;
+        font-size: 14px;
+        color: #374151;
+        font-weight: 500;
+      }
+      .config-arrow {
+        color: #d1d5db;
+      }
+      .perfil-version {
+        text-align: center;
+        font-size: 10px;
+        color: #d1d5db;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="breadcrumb" id="breadcrumb">
+      <span id="bc-text">Inicio</span>
+    </div>
+
+    <div class="device">
+      <!-- ═══════════════ LOGIN ═══════════════ -->
+      <div class="screen active" id="login">
+        <div class="login-hero">
+          <div class="status-bar">
+            <span>9:40</span>
+            <div class="status-icons">▲▲▲ ☁ 🔋</div>
+          </div>
+          <div
+            class="login-logo"
+            style="
+              flex-direction: column;
+              align-items: center;
+              gap: 0;
+              position: relative;
+            "
+          >
+            <img
+              src="data:image/png;base64,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"
+              style="width: 180px; height: auto; mix-blend-mode: screen"
+              alt="SaludMadrid+"
+            />
+          </div>
+          <div class="login-badge">✦ Comunidad de Madrid</div>
+          <div class="login-tagline">Tu salud, siempre contigo</div>
+        </div>
+        <div class="login-body">
+          <div class="login-section-label">Accede a tu cuenta</div>
+          <button class="btn-primary" onclick="nav('dashboard', 'Inicio')">
+            🔐 &nbsp;Acceder con Cl@ve PIN
+          </button>
+          <button class="btn-outline" onclick="nav('dashboard', 'Inicio')">
+            Cl@ve Permanente
+          </button>
+          <div class="login-link" onclick="nav('dashboard', 'Inicio')">
+            Acceso sin registro →
+          </div>
+        </div>
+        <div class="login-footer">
+          Sistema oficial Comunidad de Madrid · Datos protegidos RGPD
+        </div>
+      </div>
+
+      <!-- ═══════════════ DASHBOARD ═══════════════ -->
+      <div class="screen" id="dashboard">
+        <div class="dash-header">
+          <div class="status-bar">
+            <span>9:40</span>
+            <div class="status-icons">▲▲▲ ☁ 🔋</div>
+          </div>
+          <div class="dash-top">
+            <div>
+              <div class="dash-greeting">Buenos días, María</div>
+              <div class="dash-date">Miércoles, 12 de enero</div>
+            </div>
+            <div
+              class="dash-bell"
+              onclick="nav('notificaciones', 'Notificaciones')"
+            >
+              🔔
+              <div class="dash-bell-dot"></div>
+            </div>
+          </div>
+          <div class="cita-card">
+            <div class="cita-label">
+              PRÓXIMA CITA <span class="cita-badge">Mañana</span>
+            </div>
+            <div class="cita-doc">Dra. Carmen López</div>
+            <div class="cita-esp">Medicina de Familia</div>
+            <div class="cita-row">🕐 Mañana · 10:30h</div>
+            <div class="cita-row">📍 CS Fuenlabrada Norte</div>
+            <div class="cita-btns">
+              <div class="cita-btn">✈️ Cómo llegar</div>
+              <div class="cita-btn" onclick="nav('citas', 'Citas')">
+                👁 Ver detalles
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="scroll" style="padding-bottom: 90px">
+          <div class="section-label">Bienestar hoy</div>
+          <div class="card">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+              "
+            >
+              <div style="font-size: 14px; font-weight: 600; color: #111">
+                ¿Cómo te encuentras hoy?
+              </div>
+              <span class="chip chip-blue" style="font-size: 10px">HOY</span>
+            </div>
+            <div class="emoji-row">
+              <div class="emoji-btn" onclick="selectEmoji(this)">😢</div>
+              <div class="emoji-btn" onclick="selectEmoji(this)">😟</div>
+              <div class="emoji-btn" onclick="selectEmoji(this)">😐</div>
+              <div class="emoji-btn" onclick="selectEmoji(this)">🙂</div>
+              <div class="emoji-btn sel" onclick="selectEmoji(this)">😄</div>
+            </div>
+          </div>
+          <div class="section-label">Bienestar & Salud Mental</div>
+          <div
+            class="card"
+            onclick="nav('bienestar', 'Bienestar')"
+            style="
+              cursor: pointer;
+              background: linear-gradient(135deg, #5b21b6, #7c3aed, #9333ea);
+              padding: 14px 16px;
+              margin-bottom: 12px;
+            "
+          >
+            <div style="display: flex; align-items: center; gap: 12px">
+              <div
+                style="
+                  background: rgba(255, 255, 255, 0.15);
+                  border-radius: 12px;
+                  width: 44px;
+                  height: 44px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 22px;
+                  flex-shrink: 0;
+                "
+              >
+                🧠
+              </div>
+              <div style="flex: 1">
+                <div style="font-size: 14px; font-weight: 700; color: #fff">
+                  Centro de Bienestar
+                </div>
+                <div
+                  style="
+                    font-size: 11px;
+                    color: rgba(255, 255, 255, 0.75);
+                    margin-top: 2px;
+                  "
+                >
+                  Estado de ánimo · Tests · Recursos
+                </div>
+              </div>
+              <span style="color: rgba(255, 255, 255, 0.6); font-size: 18px"
+                >›</span
+              >
+            </div>
+          </div>
+          <div class="section-label">Medicación activa</div>
+          <div class="card">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+              "
+            >
+              <div style="font-size: 14px; font-weight: 700; color: #111">
+                Medicación
+              </div>
+              <span class="chip chip-orange">1 pendiente</span>
+            </div>
+            <div class="med-item">
+              <div class="med-icon" style="background: #dcfce7">✅</div>
+              <div>
+                <div class="med-name">Omeprazol 20mg</div>
+                <div class="med-sub">✓ Tomado · En ayunas</div>
+              </div>
+            </div>
+            <div class="med-item">
+              <div class="med-icon" style="background: #fef3c7">⏰</div>
+              <div>
+                <div class="med-name">Metformina 500mg</div>
+                <div class="med-sub">Pendiente · 14:00h</div>
+              </div>
+            </div>
+          </div>
+          <div class="section-label">Resultados recientes</div>
+          <div
+            class="card"
+            onclick="nav('detalle-analitica', 'Analítica')"
+            style="cursor: pointer"
+          >
+            <div class="result-row">
+              <div class="result-icon">🧪</div>
+              <div style="flex: 1">
+                <div
+                  style="
+                    font-size: 10px;
+                    font-weight: 700;
+                    color: #9ca3af;
+                    letter-spacing: 0.06em;
+                    text-transform: uppercase;
+                    margin-bottom: 2px;
+                  "
+                >
+                  Resultados recientes
+                </div>
+                <div style="font-size: 14px; font-weight: 600; color: #111">
+                  Analítica completa disponible
+                </div>
+                <div
+                  style="
+                    font-size: 12px;
+                    color: #003da5;
+                    margin-top: 2px;
+                    font-weight: 500;
+                  "
+                >
+                  Ver resultados →
+                </div>
+              </div>
+              <span style="color: #d1d5db; font-size: 18px">›</span>
+            </div>
+          </div>
+
+          <div class="section-label">Tarjeta Sanitaria</div>
+          <div
+            class="card"
+            onclick="nav('tsi', 'TSI')"
+            style="
+              cursor: pointer;
+              background: linear-gradient(135deg, #002d7a, #003da5, #0060cc);
+              padding: 14px 16px;
+            "
+          >
+            <div style="display: flex; align-items: center; gap: 12px">
+              <div
+                style="
+                  background: rgba(255, 255, 255, 0.15);
+                  border-radius: 12px;
+                  width: 44px;
+                  height: 44px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 22px;
+                  flex-shrink: 0;
+                "
+              >
+                💳
+              </div>
+              <div style="flex: 1">
+                <div style="font-size: 14px; font-weight: 700; color: #fff">
+                  Tarjeta Sanitaria Individual
+                </div>
+                <div
+                  style="
+                    font-size: 11px;
+                    color: rgba(255, 255, 255, 0.75);
+                    margin-top: 2px;
+                  "
+                >
+                  CIP: 2807534872 · Tipo O+
+                </div>
+              </div>
+              <span style="color: rgba(255, 255, 255, 0.6); font-size: 18px"
+                >›</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item active">
+            <div class="nav-icon-wrap">🏠</div>
+            <span>INICIO</span>
+          </div>
+          <div class="nav-item" onclick="nav('citas', 'Citas')">
+            <div class="nav-icon-wrap">📅</div>
+            <span>CITAS</span>
+          </div>
+          <div class="nav-item tsi-center" onclick="nav('tsi', 'TSI')">
+            <div class="nav-icon-wrap tsi-bubble" style="background: #eff6ff">
+              <span style="font-size: 18px; color: #003da5">💳</span>
+            </div>
+            <span>TSI</span>
+          </div>
+          <div class="nav-item" onclick="nav('historial', 'Historial')">
+            <div class="nav-icon-wrap">📋</div>
+            <span>HISTORIAL</span>
+          </div>
+          <div class="nav-item" onclick="nav('perfil', 'Perfil')">
+            <div class="nav-icon-wrap">👤</div>
+            <span>PERFIL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ NOTIFICACIONES ═══════════════ -->
+      <div class="screen" id="notificaciones">
+        <div style="background: #fff; flex-shrink: 0">
+          <div class="status-bar dark" style="padding: 12px 20px 0">
+            <span style="color: #111">9:40</span>
+            <div class="status-icons" style="color: #111">▲▲▲ ☁ 🔋</div>
+          </div>
+          <div class="top-bar">
+            <button class="back-btn" onclick="goBack()">←</button>
+            <div class="top-bar-title">Notificaciones</div>
+          </div>
+        </div>
+        <div class="scroll" style="padding: 12px 0 90px">
+          <div class="section-label">Hoy</div>
+          <div
+            class="notif-item"
+            onclick="nav('detalle-analitica', 'Analítica')"
+          >
+            <div class="notif-dot blue"></div>
+            <div>
+              <div class="notif-title">Analítica completa disponible</div>
+              <div class="notif-body">
+                Tu analítica del 04/06 ya está disponible. Todos los valores en
+                rango normal.
+              </div>
+              <div class="notif-time">Hace 2 horas</div>
+            </div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-dot purple"></div>
+            <div>
+              <div class="notif-title">Registro de bienestar</div>
+              <div class="notif-body">
+                No olvides registrar tu estado emocional de hoy.
+              </div>
+              <div class="notif-time">Hace 4 horas</div>
+            </div>
+          </div>
+          <div class="section-label">Ayer</div>
+          <div class="notif-item" onclick="nav('citas', 'Citas')">
+            <div class="notif-dot blue"></div>
+            <div>
+              <div class="notif-title">Recordatorio de cita</div>
+              <div class="notif-body">
+                Tu cita con la Dra. López es mañana a las 10:30h en el CS
+                Fuenlabrada Norte.
+              </div>
+              <div class="notif-time">Ayer 20:00h</div>
+            </div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-dot orange"></div>
+            <div>
+              <div class="notif-title">Receta próxima a vencer</div>
+              <div class="notif-body">
+                Tu receta de ansiolíticos vence en 7 días. Solicita la
+                renovación.
+              </div>
+              <div class="notif-time">Ayer 09:00h</div>
+            </div>
+          </div>
+          <div class="section-label">Esta semana</div>
+          <div class="notif-item">
+            <div class="notif-dot gray"></div>
+            <div>
+              <div class="notif-title">Vacuna recomendada</div>
+              <div class="notif-body">
+                Neumococo 2025 está disponible. Consulta con tu médico.
+              </div>
+              <div class="notif-time">Lunes</div>
+            </div>
+          </div>
+
+          <div class="section-label">Tarjeta Sanitaria</div>
+          <div
+            class="card"
+            onclick="nav('tsi', 'TSI')"
+            style="
+              cursor: pointer;
+              background: linear-gradient(135deg, #002d7a, #003da5, #0060cc);
+              padding: 14px 16px;
+            "
+          >
+            <div style="display: flex; align-items: center; gap: 12px">
+              <div
+                style="
+                  background: rgba(255, 255, 255, 0.15);
+                  border-radius: 12px;
+                  width: 44px;
+                  height: 44px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 22px;
+                  flex-shrink: 0;
+                "
+              >
+                💳
+              </div>
+              <div style="flex: 1">
+                <div style="font-size: 14px; font-weight: 700; color: #fff">
+                  Tarjeta Sanitaria Individual
+                </div>
+                <div
+                  style="
+                    font-size: 11px;
+                    color: rgba(255, 255, 255, 0.75);
+                    margin-top: 2px;
+                  "
+                >
+                  CIP: 2807534872 · Tipo O+
+                </div>
+              </div>
+              <span style="color: rgba(255, 255, 255, 0.6); font-size: 18px"
+                >›</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item active">
+            <div class="nav-icon-wrap">🏠</div>
+            <span>INICIO</span>
+          </div>
+          <div class="nav-item" onclick="nav('citas', 'Citas')">
+            <div class="nav-icon-wrap">📅</div>
+            <span>CITAS</span>
+          </div>
+          <div class="nav-item tsi-center" onclick="nav('tsi', 'TSI')">
+            <div class="nav-icon-wrap tsi-bubble" style="background: #eff6ff">
+              <span style="font-size: 18px; color: #003da5">💳</span>
+            </div>
+            <span>TSI</span>
+          </div>
+          <div class="nav-item" onclick="nav('historial', 'Historial')">
+            <div class="nav-icon-wrap">📋</div>
+            <span>HISTORIAL</span>
+          </div>
+          <div class="nav-item" onclick="nav('perfil', 'Perfil')">
+            <div class="nav-icon-wrap">👤</div>
+            <span>PERFIL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ CITAS ═══════════════ -->
+      <div class="screen" id="citas">
+        <div class="citas-header" style="flex-shrink: 0">
+          <div class="status-bar dark" style="padding: 0">
+            <span style="color: #111">9:41</span>
+            <div class="status-icons" style="color: #111">▲▲▲ ☁ 🔋</div>
+          </div>
+          <div class="citas-top" style="margin-top: 8px">
+            <div class="page-title">Mis Citas</div>
+            <button class="fab-round" onclick="nav('nueva-cita', 'Nueva cita')">
+              +
+            </button>
+          </div>
+          <div class="search-bar">🔍 Buscar citas...</div>
+        </div>
+        <div class="filter-row" style="flex-shrink: 0">
+          <div class="filter-btn active">Todas</div>
+          <div class="filter-btn">Pendientes</div>
+          <div class="filter-btn">Pasadas</div>
+        </div>
+        <div class="scroll" style="padding-bottom: 160px; padding-top: 8px">
+          <div class="appt-card">
+            <div class="appt-top">
+              <div class="appt-doc">Dra. Carmen López · Medicina de Fam</div>
+              <span class="chip chip-green" style="font-size: 11px"
+                >Confirmada ✓</span
+              >
+            </div>
+            <div class="appt-detail">
+              📅
+              <span style="color: #003da5; font-weight: 600"
+                >Jue 8 Jun · 10:30h</span
+              >
+            </div>
+            <div class="appt-detail">📍 CS Fuenlabrada Norte</div>
+            <div class="appt-actions">
+              <button class="appt-btn btn-mod">Modificar</button>
+              <button class="appt-btn btn-can">Cancelar</button>
+              <button class="appt-btn btn-rut">Ruta</button>
+            </div>
+          </div>
+          <div class="appt-card pend">
+            <div class="appt-top">
+              <div class="appt-doc">Enfermería · Juan Pérez</div>
+              <span class="chip chip-orange" style="font-size: 11px"
+                >Pendiente</span
+              >
+            </div>
+            <div class="appt-detail">
+              📅
+              <span style="color: #003da5; font-weight: 600"
+                >Mar 15 Jun · 09:00h</span
+              >
+            </div>
+            <div class="appt-detail">📍 CS Getafe Centro</div>
+          </div>
+          <div class="section-label">Historial</div>
+          <div class="hist-card">
+            <div>
+              <div class="hist-doc">Dra. Carmen López · Revisión</div>
+              <div class="hist-date">2 Feb 2026 · 11:00h</div>
+            </div>
+            <span class="chip chip-gray" style="font-size: 11px"
+              >Completada</span
+            >
+          </div>
+          <div class="hist-card">
+            <div>
+              <div class="hist-doc">Dr. García · Análisis sangre</div>
+              <div class="hist-date">28 Ene 2026 · 08:30h</div>
+            </div>
+            <span class="chip chip-gray" style="font-size: 11px"
+              >Completada</span
+            >
+          </div>
+        </div>
+        <button class="fab-bottom" onclick="nav('nueva-cita', 'Nueva cita')">
+          + &nbsp;Nueva cita
+        </button>
+        <div class="nav-bar">
+          <div class="nav-item" onclick="nav('dashboard', 'Inicio')">
+            <div class="nav-icon-wrap">🏠</div>
+            <span>INICIO</span>
+          </div>
+          <div class="nav-item active">
+            <div class="nav-icon-wrap">📅</div>
+            <span>CITAS</span>
+          </div>
+          <div class="nav-item tsi-center" onclick="nav('tsi', 'TSI')">
+            <div class="nav-icon-wrap tsi-bubble" style="background: #eff6ff">
+              <span style="font-size: 18px; color: #003da5">💳</span>
+            </div>
+            <span>TSI</span>
+          </div>
+          <div class="nav-item" onclick="nav('historial', 'Historial')">
+            <div class="nav-icon-wrap">📋</div>
+            <span>HISTORIAL</span>
+          </div>
+          <div class="nav-item" onclick="nav('perfil', 'Perfil')">
+            <div class="nav-icon-wrap">👤</div>
+            <span>PERFIL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ NUEVA CITA ═══════════════ -->
+      <div class="screen" id="nueva-cita">
+        <div style="background: #fff; flex-shrink: 0">
+          <div class="status-bar dark" style="padding: 12px 20px 0">
+            <span style="color: #111">9:42</span>
+            <div class="status-icons" style="color: #111">▲▲▲ ☁ 🔋</div>
+          </div>
+          <div class="top-bar">
+            <button class="back-btn" onclick="goBack()">←</button>
+            <div class="top-bar-title">Nueva cita</div>
+          </div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-circle done">✓</div>
+              <div class="step-label">Especialidad</div>
+            </div>
+            <div class="step-line done"></div>
+            <div class="step">
+              <div class="step-circle done">✓</div>
+              <div class="step-label">Médico</div>
+            </div>
+            <div class="step-line active"></div>
+            <div class="step">
+              <div class="step-circle active">3</div>
+              <div class="step-label active">Fecha</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="step">
+              <div class="step-circle todo">4</div>
+              <div class="step-label">Confirmar</div>
+            </div>
+          </div>
+        </div>
+        <div class="scroll" style="padding-bottom: 16px">
+          <div class="sel-info">
+            🔄 Medicina de Familia · Dra. Carmen López · CS Fuenlabrada Norte
+          </div>
+          <div class="cal-card">
+            <div class="cal-nav">
+              <button class="cal-arrow">‹</button>
+              <div class="cal-month">Febrero 2026</div>
+              <button class="cal-arrow">›</button>
+            </div>
+            <div class="cal-grid">
+              <div class="cal-day-label">L</div>
+              <div class="cal-day-label">M</div>
+              <div class="cal-day-label">X</div>
+              <div class="cal-day-label">J</div>
+              <div class="cal-day-label">V</div>
+              <div class="cal-day-label">S</div>
+              <div class="cal-day-label">D</div>
+              <div class="cal-day empty">26</div>
+              <div class="cal-day empty">27</div>
+              <div class="cal-day empty">28</div>
+              <div class="cal-day empty">29</div>
+              <div class="cal-day empty">30</div>
+              <div class="cal-day empty">31</div>
+              <div class="cal-day avail">1</div>
+              <div class="cal-day avail dot">2</div>
+              <div class="cal-day avail dot">3</div>
+              <div class="cal-day avail">4</div>
+              <div class="cal-day avail dot">5</div>
+              <div class="cal-day avail">6</div>
+              <div class="cal-day empty">7</div>
+              <div class="cal-day empty">8</div>
+              <div class="cal-day avail dot">9</div>
+              <div class="cal-day avail">10</div>
+              <div class="cal-day avail dot">11</div>
+              <div class="cal-day sel" id="selDay">12</div>
+              <div class="cal-day avail">13</div>
+              <div class="cal-day empty">14</div>
+              <div class="cal-day empty">15</div>
+              <div class="cal-day avail">16</div>
+              <div class="cal-day avail dot">17</div>
+              <div class="cal-day avail">18</div>
+              <div class="cal-day avail dot">19</div>
+              <div class="cal-day avail">20</div>
+              <div class="cal-day empty">21</div>
+              <div class="cal-day empty">22</div>
+              <div class="cal-day avail">23</div>
+              <div class="cal-day avail">24</div>
+              <div class="cal-day avail dot">25</div>
+              <div class="cal-day avail">26</div>
+              <div class="cal-day avail">27</div>
+              <div class="cal-day empty">28</div>
+              <div class="cal-day avail">1</div>
+            </div>
+          </div>
+          <div class="section-label">Horarios disponibles</div>
+          <div class="time-grid">
+            <div class="time-slot" onclick="selTime(this)">09:00</div>
+            <div class="time-slot" onclick="selTime(this)">09:20</div>
+            <div class="time-slot" onclick="selTime(this)">09:40</div>
+            <div class="time-slot sel" onclick="selTime(this)">10:30</div>
+            <div class="time-slot" onclick="selTime(this)">11:00</div>
+            <div class="time-slot" onclick="selTime(this)">11:20</div>
+          </div>
+          <div style="padding: 0 16px 16px">
+            <button
+              class="btn-primary"
+              onclick="nav('confirmar-cita', 'Confirmar cita')"
+            >
+              📅 &nbsp;Confirmar cita
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ CONFIRMAR CITA ═══════════════ -->
+      <div class="screen" id="confirmar-cita">
+        <div
+          class="status-bar"
+          style="
+            background: linear-gradient(160deg, #003da5, #0060cc);
+            color: #fff;
+            padding: 12px 24px 0;
+            flex-shrink: 0;
+          "
+        >
+          <span>9:43</span>
+          <div class="status-icons">▲▲▲ ☁ 🔋</div>
+        </div>
+        <div class="confirm-hero">
+          <div class="confirm-check">✅</div>
+          <div class="confirm-title">¡Cita confirmada!</div>
+          <div class="confirm-sub">Recibirás un recordatorio 24h antes</div>
+        </div>
+        <div class="scroll" style="padding-bottom: 16px">
+          <div class="confirm-card">
+            <div class="confirm-row">
+              <span class="confirm-key">Médico</span
+              ><span class="confirm-val">Dra. Carmen López</span>
+            </div>
+            <div class="confirm-row">
+              <span class="confirm-key">Especialidad</span
+              ><span class="confirm-val">Medicina de Familia</span>
+            </div>
+            <div class="confirm-row">
+              <span class="confirm-key">Fecha</span
+              ><span class="confirm-val">Jue 12 Feb 2026</span>
+            </div>
+            <div class="confirm-row">
+              <span class="confirm-key">Hora</span
+              ><span class="confirm-val">10:30h</span>
+            </div>
+            <div class="confirm-row">
+              <span class="confirm-key">Centro</span
+              ><span class="confirm-val">CS Fuenlabrada Norte</span>
+            </div>
+          </div>
+          <div class="confirm-btns">
+            <button class="btn-primary" onclick="nav('citas', 'Citas')">
+              Ver mis citas
+            </button>
+            <button class="btn-outline" onclick="nav('dashboard', 'Inicio')">
+              Volver al inicio
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ TSI ═══════════════ -->
+      <div class="screen" id="tsi">
+        <div
+          style="
+            background: linear-gradient(160deg, #002d7a, #003da5);
+            flex-shrink: 0;
+            padding: 0 20px 16px;
+          "
+        >
+          <div
+            class="status-bar"
+            style="color: #fff; padding: 0; margin-bottom: 4px"
+          >
+            <span>9:44</span>
+            <div class="status-icons">▲▲▲ ☁ 🔋</div>
+          </div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-top: 4px;
+            "
+          >
+            <div style="font-size: 20px; font-weight: 700; color: #fff">
+              Tarjeta Sanitaria
+            </div>
+            <div
+              style="
+                font-size: 22px;
+                cursor: pointer;
+                color: rgba(255, 255, 255, 0.8);
+              "
+            >
+              ↗
+            </div>
+          </div>
+        </div>
+        <div class="scroll" style="padding-bottom: 90px; background: #f0f4f8">
+          <div style="padding: 16px 16px 8px">
+            <!-- TARJETA TSI -->
+            <div
+              style="
+                background: linear-gradient(
+                  135deg,
+                  #001a5c 0%,
+                  #003da5 45%,
+                  #0060cc 75%,
+                  #0088dd 100%
+                );
+                border-radius: 20px;
+                padding: 20px 20px 18px;
+                color: #fff;
+                position: relative;
+                overflow: hidden;
+                box-shadow: 0 12px 32px rgba(0, 61, 165, 0.45);
+                min-height: 180px;
+              "
+            >
+              <!-- Círculos decorativos -->
+              <div
+                style="
+                  position: absolute;
+                  width: 180px;
+                  height: 180px;
+                  border-radius: 50%;
+                  border: 45px solid rgba(255, 255, 255, 0.06);
+                  top: -60px;
+                  right: -40px;
+                "
+              ></div>
+              <div
+                style="
+                  position: absolute;
+                  width: 120px;
+                  height: 120px;
+                  border-radius: 50%;
+                  border: 30px solid rgba(255, 255, 255, 0.04);
+                  bottom: -40px;
+                  left: -30px;
+                "
+              ></div>
+              <!-- Top row -->
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: flex-start;
+                  margin-bottom: 20px;
+                "
+              >
+                <!-- Logo area (white box placeholder like tarjeta real) -->
+                <div
+                  style="
+                    width: 56px;
+                    height: 44px;
+                    background: rgba(255, 255, 255, 0.9);
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    overflow: hidden;
+                  "
+                >
+                  <img
+                    src="data:image/png;base64,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"
+                    style="width: 52px; height: auto"
+                    alt="M+"
+                  />
+                </div>
+                <!-- Right: estrellas + CM -->
+                <div style="text-align: right">
+                  <div
+                    style="
+                      font-size: 10px;
+                      letter-spacing: 1px;
+                      color: rgba(255, 255, 255, 0.9);
+                    "
+                  >
+                    ★★★★★★★
+                  </div>
+                  <div
+                    style="
+                      font-size: 9px;
+                      font-weight: 700;
+                      letter-spacing: 0.08em;
+                      color: #fff;
+                      margin-top: 2px;
+                    "
+                  >
+                    COMUNIDAD DE MADRID
+                  </div>
+                  <div
+                    style="
+                      font-size: 8px;
+                      color: rgba(255, 255, 255, 0.75);
+                      letter-spacing: 0.05em;
+                      margin-top: 1px;
+                    "
+                  >
+                    TARJETA SANITARIA
+                  </div>
+                </div>
+              </div>
+              <!-- Números CIP -->
+              <div
+                style="
+                  font-size: 11px;
+                  letter-spacing: 1.5px;
+                  color: rgba(255, 255, 255, 0.8);
+                  font-family: monospace;
+                  margin-bottom: 2px;
+                "
+              >
+                280753 &nbsp; MDMD280753487 &nbsp; 23 &nbsp; 28
+              </div>
+              <div
+                style="
+                  font-size: 10px;
+                  color: rgba(255, 255, 255, 0.6);
+                  font-family: monospace;
+                  margin-bottom: 12px;
+                "
+              >
+                2807534872 &nbsp; 00000000
+              </div>
+              <!-- Nombre -->
+              <div
+                style="
+                  font-size: 15px;
+                  font-weight: 800;
+                  letter-spacing: 0.8px;
+                  color: #fff;
+                "
+              >
+                MARÍA GARCÍA RODRÍGUEZ
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones acción -->
+          <div style="display: flex; gap: 8px; padding: 0 16px 12px">
+            <div
+              style="
+                flex: 1;
+                background: #fff;
+                border: 1.5px solid #e5e7eb;
+                border-radius: 12px;
+                padding: 12px 6px;
+                text-align: center;
+                font-size: 12px;
+                font-weight: 600;
+                color: #374151;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+              "
+            >
+              <span style="font-size: 18px">↗</span><span>Compartir</span>
+            </div>
+            <div
+              style="
+                flex: 1;
+                background: #fff;
+                border: 1.5px solid #e5e7eb;
+                border-radius: 12px;
+                padding: 12px 6px;
+                text-align: center;
+                font-size: 12px;
+                font-weight: 600;
+                color: #374151;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+              "
+            >
+              <span style="font-size: 18px">⬇</span><span>PDF</span>
+            </div>
+            <div
+              style="
+                flex: 1;
+                background: #fff;
+                border: 1.5px solid #e5e7eb;
+                border-radius: 12px;
+                padding: 12px 6px;
+                text-align: center;
+                font-size: 12px;
+                font-weight: 600;
+                color: #374151;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+              "
+            >
+              <span style="font-size: 18px">👤</span><span>Mis datos</span>
+            </div>
+          </div>
+
+          <!-- Info médica -->
+          <div
+            style="
+              display: flex;
+              padding: 0 16px;
+              gap: 8px;
+              margin-bottom: 12px;
+            "
+          >
+            <div
+              style="
+                flex: 1;
+                background: #fff;
+                border-radius: 14px;
+                padding: 16px 8px;
+                text-align: center;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+              "
+            >
+              <div style="font-size: 24px; margin-bottom: 6px">🩸</div>
+              <div style="font-size: 13px; font-weight: 700; color: #111">
+                Tipo O+
+              </div>
+              <div style="font-size: 10px; color: #9ca3af; margin-top: 3px">
+                Grupo Sanguíneo
+              </div>
+            </div>
+            <div
+              style="
+                flex: 1;
+                background: #fff;
+                border-radius: 14px;
+                padding: 16px 8px;
+                text-align: center;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+              "
+            >
+              <div style="font-size: 24px; margin-bottom: 6px; color: #e63946">
+                ⊗
+              </div>
+              <div style="font-size: 13px; font-weight: 700; color: #111">
+                Penicilina
+              </div>
+              <div style="font-size: 10px; color: #9ca3af; margin-top: 3px">
+                Alergia conocida
+              </div>
+            </div>
+            <div
+              style="
+                flex: 1;
+                background: #fff;
+                border-radius: 14px;
+                padding: 16px 8px;
+                text-align: center;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+              "
+            >
+              <div style="font-size: 24px; margin-bottom: 6px">💚</div>
+              <div style="font-size: 13px; font-weight: 700; color: #111">
+                Sin antec.
+              </div>
+              <div style="font-size: 10px; color: #9ca3af; margin-top: 3px">
+                Condic. crónicas
+              </div>
+            </div>
+          </div>
+
+          <!-- Centro de salud -->
+          <div
+            style="
+              margin: 0 16px 12px;
+              background: #fff;
+              border-radius: 14px;
+              padding: 16px;
+              box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+            "
+          >
+            <div
+              style="
+                font-size: 10px;
+                font-weight: 700;
+                color: #9ca3af;
+                letter-spacing: 0.07em;
+                text-transform: uppercase;
+                margin-bottom: 10px;
+              "
+            >
+              Centro asignado
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #f3f4f6;
+              "
+            >
+              <span style="font-size: 13px; color: #6b7280">Médico</span>
+              <span style="font-size: 13px; font-weight: 600; color: #111"
+                >Dra. Carmen López</span
+              >
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+              "
+            >
+              <span style="font-size: 13px; color: #6b7280"
+                >Centro de salud</span
+              >
+              <span style="font-size: 13px; font-weight: 600; color: #111"
+                >CS Fuenlabrada Norte</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item" onclick="nav('dashboard', 'Inicio')">
+            <div class="nav-icon-wrap">🏠</div>
+            <span>INICIO</span>
+          </div>
+          <div class="nav-item" onclick="nav('citas', 'Citas')">
+            <div class="nav-icon-wrap">📅</div>
+            <span>CITAS</span>
+          </div>
+          <div class="nav-item tsi-center active">
+            <div class="nav-icon-wrap tsi-bubble" style="background: #003da5">
+              <span style="font-size: 18px; color: #fff">💳</span>
+            </div>
+            <span>TSI</span>
+          </div>
+          <div class="nav-item" onclick="nav('historial', 'Historial')">
+            <div class="nav-icon-wrap">📋</div>
+            <span>HISTORIAL</span>
+          </div>
+          <div class="nav-item" onclick="nav('perfil', 'Perfil')">
+            <div class="nav-icon-wrap">👤</div>
+            <span>PERFIL</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen" id="bienestar">
+        <div class="bien-header">
+          <div class="status-bar" style="color: #fff; padding: 0">
+            <span>9:45</span>
+            <div class="status-icons">▲▲▲ ☁ 🔋</div>
+          </div>
+          <div class="bien-top" style="margin-top: 6px">
+            <div>
+              <div class="bien-title">Centro de Bienestar</div>
+              <div class="bien-sub">Tu espacio de salud mental</div>
+            </div>
+            <span style="font-size: 20px; cursor: pointer">🔔</span>
+          </div>
+        </div>
+        <div class="scroll" style="padding-bottom: 90px">
+          <div class="card" style="margin-top: 12px">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+              "
+            >
+              <div style="font-size: 14px; font-weight: 700; color: #111">
+                Estado de ánimo semanal
+              </div>
+              <span style="font-size: 12px; color: #16a34a; font-weight: 600"
+                >↑ Positiva</span
+              >
+            </div>
+            <div
+              style="display: flex; gap: 4px; justify-content: space-between"
+            >
+              <div class="mood-col">
+                <div class="mood-dot" style="background: #e63946"></div>
+                <div class="mood-day">L</div>
+              </div>
+              <div class="mood-col">
+                <div class="mood-dot" style="background: #f59e0b"></div>
+                <div class="mood-day">M</div>
+              </div>
+              <div class="mood-col">
+                <div class="mood-dot" style="background: #16a34a"></div>
+                <div class="mood-day">X</div>
+              </div>
+              <div class="mood-col">
+                <div class="mood-dot" style="background: #16a34a"></div>
+                <div class="mood-day">J</div>
+              </div>
+              <div class="mood-col">
+                <div class="mood-dot" style="background: #16a34a"></div>
+                <div class="mood-day">V</div>
+              </div>
+              <div class="mood-col">
+                <div class="mood-dot" style="background: #16a34a"></div>
+                <div class="mood-day">S</div>
+              </div>
+              <div class="mood-col">
+                <div class="mood-dot" style="background: #7c3aed"></div>
+                <div class="mood-day">D</div>
+              </div>
+            </div>
+            <div style="font-size: 11px; color: #374151; margin-top: 10px">
+              Esta semana: <b>Tendencia positiva ↑</b> Mejor que la semana
+              anterior
+            </div>
+          </div>
+          <div class="section-label">Recursos de bienestar</div>
+          <div class="recurso-grid">
+            <div class="recurso-card resp">
+              <div class="recurso-icon">🫁</div>
+              <div class="recurso-name">Respiración</div>
+              <div class="recurso-time">5 min</div>
+            </div>
+            <div class="recurso-card mind">
+              <div class="recurso-icon">🧘</div>
+              <div class="recurso-name">Mindfulness</div>
+              <div class="recurso-time">10 min</div>
+            </div>
+            <div
+              class="recurso-card gad"
+              onclick="nav('test-salud', 'Test GAD-7')"
+            >
+              <div class="recurso-icon">📋</div>
+              <div class="recurso-name">Test GAD-7</div>
+              <div class="recurso-time">Ansiedad</div>
+            </div>
+            <div
+              class="recurso-card phq"
+              onclick="nav('test-salud', 'Test PHQ-9')"
+            >
+              <div class="recurso-icon">📊</div>
+              <div class="recurso-name">Test PHQ-9</div>
+              <div class="recurso-time">Depresión</div>
+            </div>
+          </div>
+          <div class="section-label">Profesionales</div>
+          <button class="psico-btn" onclick="nav('nueva-cita', 'Nueva cita')">
+            👤 &nbsp;Pedir cita con psicólogo de AP
+          </button>
+          <div class="crisis-banner">
+            <div>
+              <div class="crisis-title">¿En crisis? · Llama ahora</div>
+              <div class="crisis-sub">717 003 717 · Línea de atención 24h</div>
+            </div>
+            <div class="crisis-call">📞</div>
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item" onclick="nav('dashboard', 'Inicio')">
+            <div class="nav-icon-wrap">🏠</div>
+            <span>INICIO</span>
+          </div>
+          <div class="nav-item" onclick="nav('citas', 'Citas')">
+            <div class="nav-icon-wrap">📅</div>
+            <span>CITAS</span>
+          </div>
+          <div class="nav-item tsi-center" onclick="nav('tsi', 'TSI')">
+            <div class="nav-icon-wrap tsi-bubble" style="background: #eff6ff">
+              <span style="font-size: 18px; color: #003da5">💳</span>
+            </div>
+            <span>TSI</span>
+          </div>
+          <div class="nav-item" onclick="nav('historial', 'Historial')">
+            <div class="nav-icon-wrap">📋</div>
+            <span>HISTORIAL</span>
+          </div>
+          <div class="nav-item" onclick="nav('perfil', 'Perfil')">
+            <div class="nav-icon-wrap">👤</div>
+            <span>PERFIL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ TEST SALUD MENTAL ═══════════════ -->
+      <div class="screen" id="test-salud">
+        <div style="background: #fff; flex-shrink: 0">
+          <div class="status-bar dark" style="padding: 12px 20px 0">
+            <span style="color: #111">9:46</span>
+            <div class="status-icons" style="color: #111">▲▲▲ ☁ 🔋</div>
+          </div>
+          <div class="top-bar">
+            <button class="back-btn" onclick="goBack()">←</button>
+            <div class="top-bar-title">Test GAD-7 — Ansiedad</div>
+          </div>
+          <div style="padding: 8px 16px 12px">
+            <div class="test-progress">
+              <div class="test-progress-fill" style="width: 28%"></div>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                margin-top: 4px;
+                font-size: 10px;
+                color: #9ca3af;
+                font-weight: 600;
+              "
+            >
+              <span>Pregunta 2 de 7</span><span>28%</span>
+            </div>
+          </div>
+        </div>
+        <div class="scroll" style="padding-bottom: 16px">
+          <div class="test-q">
+            <div class="test-q-num">Pregunta 2 / 7</div>
+            <div class="test-q-text">
+              Durante las últimas 2 semanas, ¿con qué frecuencia le han
+              molestado los siguientes problemas?<br /><br />No poder dejar de
+              preocuparse o controlar las preocupaciones
+            </div>
+          </div>
+          <div class="test-options">
+            <div class="test-opt" onclick="selOpt(this)">Ningún día</div>
+            <div class="test-opt sel" onclick="selOpt(this)">Varios días</div>
+            <div class="test-opt" onclick="selOpt(this)">
+              Más de la mitad de los días
+            </div>
+            <div class="test-opt" onclick="selOpt(this)">
+              Casi todos los días
+            </div>
+          </div>
+          <div style="padding: 20px 16px 0; display: flex; gap: 10px">
+            <button class="btn-outline" style="flex: 1" onclick="goBack()">
+              ← Anterior
+            </button>
+            <button
+              class="btn-primary"
+              style="flex: 1"
+              onclick="nav('bienestar', 'Bienestar')"
+            >
+              Siguiente →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ HISTORIAL ═══════════════ -->
+      <div class="screen" id="historial">
+        <div style="background: #fff; flex-shrink: 0">
+          <div class="status-bar dark" style="padding: 12px 20px 0">
+            <span style="color: #111">9:52</span>
+            <div class="status-icons" style="color: #111">▲▲▲ ☁ 🔋</div>
+          </div>
+          <div class="hist-header-bar">
+            <div class="page-title">Historial Clínico</div>
+            <span style="font-size: 20px; cursor: pointer">🔍</span>
+          </div>
+          <div style="padding: 10px 16px">
+            <div class="search-bar">🔍 Buscar en historial...</div>
+          </div>
+          <div class="filter-row" style="padding: 0 16px 10px">
+            <div class="filter-btn active">Todos</div>
+            <div class="filter-btn">Análisis</div>
+            <div class="filter-btn">Informes</div>
+            <div class="filter-btn">Vacunas</div>
+          </div>
+        </div>
+        <div class="scroll" style="padding-bottom: 90px; padding-top: 6px">
+          <div
+            class="hist-item"
+            onclick="nav('detalle-analitica', 'Analítica')"
+          >
+            <div class="hist-icon-wrap ana">🧪</div>
+            <div class="hist-info">
+              <div class="hist-name">Analítica completa</div>
+              <div class="hist-meta">
+                04/06/2025 &nbsp;<span
+                  class="chip chip-green"
+                  style="font-size: 10px; padding: 2px 6px"
+                  >✓ Normal</span
+                >
+              </div>
+            </div>
+            <div class="hist-actions">
+              <button class="hist-btn btn-ver">Ver</button>
+              <button class="hist-btn btn-pdf">PDF</button>
+            </div>
+          </div>
+          <div class="hist-item">
+            <div class="hist-icon-wrap inf">📄</div>
+            <div class="hist-info">
+              <div class="hist-name">Informe consulta</div>
+              <div class="hist-meta">22/05/2025 &nbsp; Dra. López</div>
+            </div>
+            <div class="hist-actions">
+              <button class="hist-btn btn-ver">Ver</button>
+              <button class="hist-btn btn-pdf">PDF</button>
+            </div>
+          </div>
+          <div class="hist-item">
+            <div class="hist-icon-wrap vac">💉</div>
+            <div class="hist-info">
+              <div class="hist-name">Vacunación</div>
+              <div class="vacuna-chips">
+                <span class="vacuna-chip">✓ Gripe 2024</span>
+                <span class="vacuna-chip">✓ COVID Booster</span>
+              </div>
+            </div>
+          </div>
+          <div class="next-vac">
+            📅 &nbsp;<span
+              >Próxima vacuna recomendada: <b>Neumococo 2025</b></span
+            >
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item" onclick="nav('dashboard', 'Inicio')">
+            <div class="nav-icon-wrap">🏠</div>
+            <span>INICIO</span>
+          </div>
+          <div class="nav-item" onclick="nav('citas', 'Citas')">
+            <div class="nav-icon-wrap">📅</div>
+            <span>CITAS</span>
+          </div>
+          <div class="nav-item tsi-center" onclick="nav('tsi', 'TSI')">
+            <div class="nav-icon-wrap tsi-bubble" style="background: #eff6ff">
+              <span style="font-size: 18px; color: #003da5">💳</span>
+            </div>
+            <span>TSI</span>
+          </div>
+          <div class="nav-item active">
+            <div class="nav-icon-wrap">📋</div>
+            <span>HISTORIAL</span>
+          </div>
+          <div class="nav-item" onclick="nav('perfil', 'Perfil')">
+            <div class="nav-icon-wrap">👤</div>
+            <span>PERFIL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ DETALLE ANALÍTICA ═══════════════ -->
+      <div class="screen" id="detalle-analitica">
+        <div class="analitica-header" style="flex-shrink: 0">
+          <div class="status-bar dark" style="padding: 12px 20px 0">
+            <span style="color: #111">9:53</span>
+            <div class="status-icons" style="color: #111">▲▲▲ ☁ 🔋</div>
+          </div>
+          <div class="top-bar">
+            <button class="back-btn" onclick="goBack()">←</button>
+            <div class="top-bar-title">Analítica completa</div>
+          </div>
+          <div class="analitica-meta">
+            <div class="analitica-fecha">
+              04/06/2025 · Dra. Carmen López · CS Fuenlabrada Norte
+            </div>
+            <div class="analitica-estado">✓ Todos los valores normales</div>
+          </div>
+        </div>
+        <div class="scroll" style="padding-bottom: 90px; padding-top: 8px">
+          <div class="section-label">Hemograma</div>
+          <div class="param-row">
+            <div class="semaforo green"></div>
+            <div class="param-name">
+              Hematíes
+              <div class="param-ref">Ref: 3.8–5.2 M/µL</div>
+            </div>
+            <div class="param-val ok">4.6</div>
+          </div>
+          <div class="param-row">
+            <div class="semaforo green"></div>
+            <div class="param-name">
+              Hemoglobina
+              <div class="param-ref">Ref: 12.0–16.0 g/dL</div>
+            </div>
+            <div class="param-val ok">13.8</div>
+          </div>
+          <div class="param-row">
+            <div class="semaforo green"></div>
+            <div class="param-name">
+              Leucocitos
+              <div class="param-ref">Ref: 4.0–11.0 K/µL</div>
+            </div>
+            <div class="param-val ok">6.2</div>
+          </div>
+          <div class="section-label">Bioquímica</div>
+          <div class="param-row">
+            <div class="semaforo green"></div>
+            <div class="param-name">
+              Glucosa
+              <div class="param-ref">Ref: 70–100 mg/dL</div>
+            </div>
+            <div class="param-val ok">88</div>
+          </div>
+          <div class="param-row">
+            <div class="semaforo yellow"></div>
+            <div class="param-name">
+              Colesterol total
+              <div class="param-ref">Ref: &lt;200 mg/dL</div>
+            </div>
+            <div class="param-val" style="color: #f59e0b">198</div>
+          </div>
+          <div class="param-row">
+            <div class="semaforo green"></div>
+            <div class="param-name">
+              Triglicéridos
+              <div class="param-ref">Ref: &lt;150 mg/dL</div>
+            </div>
+            <div class="param-val ok">112</div>
+          </div>
+          <div class="param-row">
+            <div class="semaforo green"></div>
+            <div class="param-name">
+              Creatinina
+              <div class="param-ref">Ref: 0.5–1.1 mg/dL</div>
+            </div>
+            <div class="param-val ok">0.82</div>
+          </div>
+          <div style="padding: 16px 16px 0">
+            <button class="btn-primary">⬇ &nbsp;Descargar PDF</button>
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item" onclick="nav('dashboard', 'Inicio')">
+            <div class="nav-icon-wrap">🏠</div>
+            <span>INICIO</span>
+          </div>
+          <div class="nav-item" onclick="nav('citas', 'Citas')">
+            <div class="nav-icon-wrap">📅</div>
+            <span>CITAS</span>
+          </div>
+          <div class="nav-item tsi-center" onclick="nav('tsi', 'TSI')">
+            <div class="nav-icon-wrap tsi-bubble" style="background: #eff6ff">
+              <span style="font-size: 18px; color: #003da5">💳</span>
+            </div>
+            <span>TSI</span>
+          </div>
+          <div class="nav-item active">
+            <div class="nav-icon-wrap">📋</div>
+            <span>HISTORIAL</span>
+          </div>
+          <div class="nav-item" onclick="nav('perfil', 'Perfil')">
+            <div class="nav-icon-wrap">👤</div>
+            <span>PERFIL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════ PERFIL ═══════════════ -->
+      <div class="screen" id="perfil">
+        <div
+          class="status-bar"
+          style="
+            background: linear-gradient(160deg, #002d7a, #003da5);
+            color: #fff;
+            padding: 12px 24px 0;
+            flex-shrink: 0;
+          "
+        >
+          <span>9:59</span>
+          <div class="status-icons">▲▲▲ ☁ 🔋</div>
+        </div>
+        <div class="perfil-hero">
+          <div class="perfil-avatar">MG</div>
+          <div class="perfil-name">María García Rodríguez</div>
+          <div class="perfil-sub">Paciente · CS Fuenlabrada Norte</div>
+        </div>
+        <div class="scroll" style="padding-bottom: 90px">
+          <div class="datos-card">
+            <div class="datos-label">Datos sanitarios</div>
+            <div class="datos-row">
+              <span class="datos-key">CIP</span
+              ><span class="datos-val">2807534872</span>
+            </div>
+            <div class="datos-row">
+              <span class="datos-key">Médico asignado</span
+              ><span class="datos-val">Dra. Carmen López</span>
+            </div>
+            <div class="datos-row">
+              <span class="datos-key">Centro de salud</span
+              ><span class="datos-val">CS Fuenlabrada Norte</span>
+            </div>
+            <div class="datos-row">
+              <span class="datos-key">Teléfono</span
+              ><span class="datos-val blue">916 08 40 00</span>
+            </div>
+          </div>
+          <div class="section-label">Configuración</div>
+          <div class="config-item">
+            <div class="config-icon">🔔</div>
+            <div class="config-label">Notificaciones</div>
+            <span class="config-arrow">›</span>
+          </div>
+          <div class="config-item">
+            <div class="config-icon">♿</div>
+            <div class="config-label">Accesibilidad</div>
+            <span class="config-arrow">›</span>
+          </div>
+          <div class="config-item">
+            <div class="config-icon">🔐</div>
+            <div class="config-label">Privacidad y datos</div>
+            <span class="config-arrow">›</span>
+          </div>
+          <div class="config-item">
+            <div class="config-icon">ℹ️</div>
+            <div class="config-label">Ayuda y soporte</div>
+            <span class="config-arrow">›</span>
+          </div>
+          <div class="config-item" onclick="nav('login', 'Inicio')">
+            <div class="config-icon" style="background: #fef2f2">🚪</div>
+            <div class="config-label" style="color: #e63946">Cerrar sesión</div>
+          </div>
+          <div class="perfil-version">
+            SaludMadrid+ v2.1.0 · Sistema oficial Comunidad de Madrid
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item" onclick="nav('dashboard', 'Inicio')">
+            <div class="nav-icon-wrap">🏠</div>
+            <span>INICIO</span>
+          </div>
+          <div class="nav-item" onclick="nav('citas', 'Citas')">
+            <div class="nav-icon-wrap">📅</div>
+            <span>CITAS</span>
+          </div>
+          <div class="nav-item tsi-center" onclick="nav('tsi', 'TSI')">
+            <div class="nav-icon-wrap tsi-bubble" style="background: #eff6ff">
+              <span style="font-size: 18px; color: #003da5">💳</span>
+            </div>
+            <span>TSI</span>
+          </div>
+          <div class="nav-item" onclick="nav('historial', 'Historial')">
+            <div class="nav-icon-wrap">📋</div>
+            <span>HISTORIAL</span>
+          </div>
+          <div class="nav-item active">
+            <div class="nav-icon-wrap">👤</div>
+            <span>PERFIL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /device -->
+
+    <script>
+      // ── Historia de navegación ──
+      let history = ["login"];
+      let historyLabels = ["Inicio"];
+
+      function nav(id, label) {
+        const from = document.querySelector(".screen.active");
+        from.classList.remove("active");
+        const to = document.getElementById(id);
+        to.classList.remove("slide-in", "slide-back");
+        void to.offsetWidth;
+        to.classList.add("active", "slide-in");
+        history.push(id);
+        historyLabels.push(label);
+        updateBreadcrumb();
+        // scroll to top
+        const scroll = to.querySelector(".scroll");
+        if (scroll) scroll.scrollTop = 0;
+      }
+
+      function goBack() {
+        if (history.length <= 1) return;
+        history.pop();
+        historyLabels.pop();
+        const prevId = history[history.length - 1];
+        const from = document.querySelector(".screen.active");
+        from.classList.remove("active");
+        const to = document.getElementById(prevId);
+        to.classList.remove("slide-in", "slide-back");
+        void to.offsetWidth;
+        to.classList.add("active", "slide-back");
+        updateBreadcrumb();
+        const scroll = to.querySelector(".scroll");
+        if (scroll) scroll.scrollTop = 0;
+      }
+
+      function updateBreadcrumb() {
+        const bc = document.getElementById("bc-text");
+        const labels = historyLabels.slice(-3);
+        bc.innerHTML = labels
+          .map((l, i) =>
+            i === labels.length - 1
+              ? `<span>${l}</span>`
+              : `${l} <span class="sep">›</span> `,
+          )
+          .join("");
+      }
+
+      // Selección emoji
+      function selectEmoji(el) {
+        el.closest(".emoji-row")
+          .querySelectorAll(".emoji-btn")
+          .forEach((b) => b.classList.remove("sel"));
+        el.classList.add("sel");
+      }
+
+      // Selección horario
+      function selTime(el) {
+        el.closest(".time-grid")
+          .querySelectorAll(".time-slot")
+          .forEach((s) => s.classList.remove("sel"));
+        el.classList.add("sel");
+      }
+
+      // Selección test
+      function selOpt(el) {
+        el.closest(".test-options")
+          .querySelectorAll(".test-opt")
+          .forEach((o) => o.classList.remove("sel"));
+        el.classList.add("sel");
+      }
+
+      // Clic en días del calendario
+      document.querySelectorAll(".cal-day.avail").forEach((d) => {
+        d.addEventListener("click", function () {
+          document
+            .querySelectorAll(".cal-day")
+            .forEach((x) => x.classList.remove("sel"));
+          this.classList.add("sel");
+        });
+      });
+    </script>
+  </body>
+</html>
