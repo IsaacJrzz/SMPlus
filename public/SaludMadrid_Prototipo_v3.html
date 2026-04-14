@@ -93,30 +93,32 @@
         display: flex;
       }
       .screen.slide-in {
-        animation: slideIn 0.22s ease-out;
+        animation: slideIn 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       }
       .screen.slide-back {
-        animation: slideBack 0.22s ease-out;
+        animation: slideBack 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      .screen.slide-out {
+        animation: slideOut 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+      .screen.slide-out-back {
+        animation: slideOutBack 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
       }
       @keyframes slideIn {
-        from {
-          transform: translateX(30px);
-          opacity: 0.6;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
+        from { transform: translateX(100%); opacity: 0.92; }
+        to   { transform: translateX(0);    opacity: 1;    }
       }
       @keyframes slideBack {
-        from {
-          transform: translateX(-20px);
-          opacity: 0.6;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
+        from { transform: translateX(-100%); opacity: 0.92; }
+        to   { transform: translateX(0);     opacity: 1;    }
+      }
+      @keyframes slideOut {
+        from { transform: translateX(0);    opacity: 1; }
+        to   { transform: translateX(-28%); opacity: 0; }
+      }
+      @keyframes slideOutBack {
+        from { transform: translateX(0);    opacity: 1; }
+        to   { transform: translateX(100%); opacity: 0; }
       }
 
       /* ── NAV BAR ── */
@@ -3281,17 +3283,28 @@
       let history = ["login"];
       let historyLabels = ["Inicio"];
 
+      // ── Navegación con transición dual (entra + sale simultáneo) ──
       function nav(id, label) {
         const from = document.querySelector(".screen.active");
-        from.classList.remove("active");
-        const to = document.getElementById(id);
-        to.classList.remove("slide-in", "slide-back");
+        const to   = document.getElementById(id);
+        if (!to || from === to) return;
+
+        to.style.zIndex = "2";
+        to.classList.remove("slide-in", "slide-back", "slide-out", "slide-out-back");
         void to.offsetWidth;
         to.classList.add("active", "slide-in");
+
+        from.classList.remove("slide-in", "slide-back");
+        from.classList.add("slide-out");
+
+        setTimeout(() => {
+          from.classList.remove("active", "slide-out");
+          to.style.zIndex = "";
+        }, 340);
+
         history.push(id);
         historyLabels.push(label);
         updateBreadcrumb();
-        // scroll to top
         const scroll = to.querySelector(".scroll");
         if (scroll) scroll.scrollTop = 0;
       }
@@ -3301,12 +3314,23 @@
         history.pop();
         historyLabels.pop();
         const prevId = history[history.length - 1];
-        const from = document.querySelector(".screen.active");
-        from.classList.remove("active");
-        const to = document.getElementById(prevId);
-        to.classList.remove("slide-in", "slide-back");
+        const from   = document.querySelector(".screen.active");
+        const to     = document.getElementById(prevId);
+        if (!to || from === to) return;
+
+        to.style.zIndex = "2";
+        to.classList.remove("slide-in", "slide-back", "slide-out", "slide-out-back");
         void to.offsetWidth;
         to.classList.add("active", "slide-back");
+
+        from.classList.remove("slide-in", "slide-back");
+        from.classList.add("slide-out-back");
+
+        setTimeout(() => {
+          from.classList.remove("active", "slide-out-back");
+          to.style.zIndex = "";
+        }, 340);
+
         updateBreadcrumb();
         const scroll = to.querySelector(".scroll");
         if (scroll) scroll.scrollTop = 0;
@@ -3314,6 +3338,7 @@
 
       function updateBreadcrumb() {
         const bc = document.getElementById("bc-text");
+        if (!bc) return;
         const labels = historyLabels.slice(-3);
         bc.innerHTML = labels
           .map((l, i) =>
@@ -3324,7 +3349,7 @@
           .join("");
       }
 
-      // Selección emoji
+      // ── Selección emoji ──
       function selectEmoji(el) {
         el.closest(".emoji-row")
           .querySelectorAll(".emoji-btn")
@@ -3332,7 +3357,7 @@
         el.classList.add("sel");
       }
 
-      // Selección horario
+      // ── Selección horario ──
       function selTime(el) {
         el.closest(".time-grid")
           .querySelectorAll(".time-slot")
@@ -3340,7 +3365,7 @@
         el.classList.add("sel");
       }
 
-      // Selección test
+      // ── Selección test ──
       function selOpt(el) {
         el.closest(".test-options")
           .querySelectorAll(".test-opt")
@@ -3348,15 +3373,71 @@
         el.classList.add("sel");
       }
 
-      // Clic en días del calendario
+      // ── Calendario ──
       document.querySelectorAll(".cal-day.avail").forEach((d) => {
         d.addEventListener("click", function () {
-          document
-            .querySelectorAll(".cal-day")
-            .forEach((x) => x.classList.remove("sel"));
+          document.querySelectorAll(".cal-day").forEach((x) => x.classList.remove("sel"));
           this.classList.add("sel");
         });
       });
+
+      // ── Reloj en tiempo real ──
+      function updateClock() {
+        const n = new Date();
+        const t = String(n.getHours()).padStart(2,"0") + ":" +
+                  String(n.getMinutes()).padStart(2,"0");
+        document.querySelectorAll(".status-clock").forEach((el) => (el.textContent = t));
+      }
+
+      // ── Iconos status bar en CSS puro (sustituye ▲▲▲ ☁ 🔋) ──
+      function initStatusBars() {
+        const iconsHTML = `
+          <div style="display:flex;align-items:flex-end;gap:2px">
+            <div style="width:3px;height:4px;background:currentColor;border-radius:1px;opacity:.85"></div>
+            <div style="width:3px;height:7px;background:currentColor;border-radius:1px;opacity:.85"></div>
+            <div style="width:3px;height:10px;background:currentColor;border-radius:1px;opacity:.85"></div>
+            <div style="width:3px;height:13px;background:currentColor;border-radius:1px;opacity:.85"></div>
+          </div>
+          <svg width="15" height="11" viewBox="0 0 24 18" fill="currentColor" style="opacity:.85">
+            <path d="M12 3.6C8.4 3.6 5.1 5.1 2.7 7.5L0 4.8C3.3 1.8 7.5 0 12 0s8.7 1.8 12 4.8l-2.7 2.7C18.9 5.1 15.6 3.6 12 3.6z"/>
+            <path d="M12 9.6c-2.1 0-3.9.84-5.28 2.19L4.2 9.3C6.3 7.26 9 6 12 6s5.7 1.26 7.8 3.3l-2.52 2.49C15.9 10.44 14.1 9.6 12 9.6z"/>
+            <circle cx="12" cy="16.5" r="2.25"/>
+          </svg>
+          <div style="display:flex;align-items:center">
+            <div style="width:22px;height:11px;border:1.5px solid currentColor;border-radius:2.5px;padding:1.5px;opacity:.9">
+              <div style="width:78%;height:100%;background:currentColor;border-radius:1px"></div>
+            </div>
+            <div style="width:2px;height:5px;background:currentColor;border-radius:0 1px 1px 0;opacity:.6;margin-left:-1px"></div>
+          </div>`;
+
+        document.querySelectorAll(".status-icons").forEach((el) => {
+          el.innerHTML = iconsHTML;
+          Object.assign(el.style, { display:"flex", alignItems:"center", gap:"7px" });
+        });
+
+        // Marca el span de la hora en cada status-bar como reloj vivo
+        document.querySelectorAll(".status-bar").forEach((bar) => {
+          const span = bar.querySelector("span:first-child");
+          if (span) span.classList.add("status-clock");
+        });
+      }
+
+      // ── Fecha dinámica en dashboard ──
+      function updateDashDate() {
+        const el = document.querySelector(".dash-date");
+        if (!el) return;
+        const D = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+        const M = ["enero","febrero","marzo","abril","mayo","junio",
+                   "julio","agosto","septiembre","octubre","noviembre","diciembre"];
+        const n = new Date();
+        el.textContent = `${D[n.getDay()]}, ${n.getDate()} de ${M[n.getMonth()]}`;
+      }
+
+      // ── Init ──
+      initStatusBars();
+      updateClock();
+      updateDashDate();
+      setInterval(updateClock, 1000);
     </script>
   </body>
 </html>
