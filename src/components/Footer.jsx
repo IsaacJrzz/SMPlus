@@ -2,33 +2,55 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <footer className="footer-container">
-      <div className="footer-content">
-        <div className="footer-brand">
-          <h3 style={{ color: 'var(--primary)' }}>SM+</h3>
-          <p>Innovación en Salud Pública Digital.</p>
-        </div>
+    <footer className="modern-footer">
+      <div className="lava-lamp-bg">
+        <div className="blob-footer-1"></div>
+        <div className="blob-footer-2"></div>
+      </div>
+
+      <div className="footer-container">
         
-        <div className="footer-links">
-          <h4>Proyecto</h4>
-          <ul>
-            <li><a href="#features">Módulos</a></li>
-            <li><a href="#stack">Tecnologías</a></li>
-            <li><a href="#doc">Documentación</a></li>
+        {/* COLUMNA 1: INFO DEL PROYECTO */}
+        <div className="footer-info-col">
+          <img src="/logo-hero.png" className="footer-logo-img" alt="M+ SaludMadrid" />
+          <p className="footer-tagline">
+            Trabajo de Fin de Grado enfocado en la digitalización y optimización 
+            de procesos en la salud pública mediante tecnologías web modernas.
+          </p>
+          <div className="footer-author-info">
+            <p><span>Autor:</span> Isaac Alonso & Iker Domínguez</p>
+            <p><span>Tutor:</span> Nombre de tu Enrrique Andrès</p>
+            <p><span>Grado:</span> Desarrollo de Aplicaciones Multiplataforma</p>
+          </div>
+        </div>
+
+        {/* COLUMNA 2: MEMORIA / DOCS */}
+        <div className="footer-links-col">
+          <h4>Documentación</h4>
+          <ul className="footer-links-list">
+            <li><a href="#abstract">Resumen / Abstract</a></li>
+            <li><a href="#analisis">Análisis de Requisitos</a></li>
+            <li><a href="#diseno">Diseño de Interfaz (UI/UX)</a></li>
+            <li><a href="#conclusiones">Conclusiones</a></li>
           </ul>
         </div>
 
-        <div className="footer-legal">
-          <h4>Normativa</h4>
-          <ul>
-            <li>RGPD / LOPDGDD</li>
-            <li>Esquema Nacional de Seguridad</li>
+        {/* COLUMNA 3: RECURSOS */}
+        <div className="footer-links-col">
+          <h4>Recursos</h4>
+          <ul className="footer-links-list">
+            <li><a href="#github">Repositorio GitHub</a></li>
+            <li><a href="#stack">Stack Tecnológico</a></li>
+            <li><a href="#bibliografia">Bibliografía</a></li>
+            <li><a href="#memoria">Descargar Memoria (PDF)</a></li>
           </ul>
         </div>
+
       </div>
-      
+
       <div className="footer-bottom">
-        <p>&copy; 2025 SM+ Salud Madrid Plus. Proyecto con fines académicos - MEDAC.</p>
+        <p>&copy; 2026 TFG - M+ SaludMadrid. Desarrollado con fines académicos.</p>
+        <p>Universidad / Institución Educativa</p>
       </div>
     </footer>
   );

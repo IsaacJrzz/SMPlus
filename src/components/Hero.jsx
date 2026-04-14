@@ -4,75 +4,42 @@ import '../styles/App.css';
 const Hero = () => {
   return (
     <section className="hero-fullscreen">
-      <div className="hero-split">
+      {/* CAPA ANIMADA DE FONDO TIPO LÁMPARA DE LAVA */}
+      <div className="lava-lamp-bg">
+        <div className="blob blob-1"></div>
+        <div className="blob blob-2"></div>
+        <div className="blob blob-3"></div>
+      </div>
+
+      <div className="hero-container">
+        {/* LADO IZQUIERDO: TEXTO Y LOGO */}
+        <div className="hero-content-side">
+        <span className="title-sm">El futuro de la gestión sanitaria</span>
         
-        {/* Lado Izquierdo - Texto y Acciones */}
-        <div className="hero-left">
-          <div className="hero-text-block">
-            <h1 className="hero-title">
-              <span className="title-sm">SALUD MENTAL</span>
-              <span className="title-plus">SM+</span>
-            </h1>
+        <div className="hero-logo-wrapper">
+            <img src="/logo-hero.png" alt="Logo SM+" className="hero-logo-img" />
+        </div>
             <p className="hero-description">
-              Innovación. Seguridad. Integración. Accede al futuro de la gestión sanitaria 
-              con nuestra plataforma unificada para la Comunidad de Madrid.
+                Innovación tecnológica para la salud mental. Una plataforma 
+                diseñada para aportar calma, seguridad y eficiencia en cada proceso.
             </p>
+
             <div className="hero-buttons">
-              <button className="btn-discover">
-                <span>Descubrir</span> <span className="btn-arrow"></span>
-              </button>
-              <a href="#contacto" className="link-connect">
-                <span className="icon-discord-mock"></span> Portal Ciudadano
-              </a>
+                <button className="btn-portal">Portal Paciente</button>
+                <a href="#modulos" className="btn-discover">Descubrir Módulos</a>
+            </div>
+        </div>
+
+        {/* LADO DERECHO: MOCKUP DE LA APP */}
+        <div className="hero-mockup-side">
+          <div className="mockup-container">
+            <div className="mockup-img-wrapper">
+              {/* Aquí irá tu imagen real: <img src="/mockup.png" alt="App Mockup" /> */}
+              <p className="mockup-text-placeholder">Tu Mockup Aquí</p>
             </div>
           </div>
         </div>
-
-        {/* Lado Derecho - Imagen Conceptual */}
-        <div className="hero-right">
-          {/* El fondo de esta sección será la imagen conceptual sanitaria */}
-          <div className="conceptual-overlay"></div>
-        </div>
       </div>
-
-      {/* Barra de Acciones Inferior (como la de referencia) */}
-      <footer className="hero-bottom-bar">
-        <div className="bar-container">
-          
-          <div className="bar-action-play">
-            <button className="btn-play">
-              <span className="play-icon">▶</span>
-            </button>
-            <span className="play-text">VER VIDEO</span>
-          </div>
-
-          <div className="bar-info-block block-1">
-            <span className="block-number">01</span>
-            <p className="block-text">
-              Plataforma digital integrada para gestionar citas, historial clínico y bienestar mental en un solo lugar.
-            </p>
-          </div>
-
-          <div className="bar-info-block block-2">
-            <span className="block-number">02</span>
-            <p className="block-text">
-              Tecnología avanzada para unificar la atención primaria y especializada en la Comunidad de Madrid.
-            </p>
-          </div>
-
-          <div className="bar-info-arrow">
-            <button className="btn-next-bar">→</button>
-          </div>
-
-          <div className="bar-socials">
-            {/* Usaré texto o placeholders para los iconos de redes sociales */}
-            <a href="#" className="social-icon">f</a>
-            <a href="#" className="social-icon">in</a>
-            <a href="#" className="social-icon">ig</a>
-            <a href="#" className="social-icon">X</a>
-          </div>
-        </div>
-      </footer>
     </section>
   );
 };

@@ -1,68 +1,112 @@
-/* VARIABLES GLOBALES */
+/* ==========================================================================
+   VARIABLES GLOBALES Y RESET
+   ========================================================================== */
 :root {
   --primary: #E30613;          /* Rojo Salud Madrid */
-  --primary-hover: #b3050f;    /* Rojo oscuro */
+  --primary-hover: #b3050f;
   --secondary: #00568F;       /* Azul Sanidad */
-  --accent-mental: #6c5ce7;    /* Púrpura Salud Mental */
-  --dark-bg: #0d0e12;         /* Fondo oscuro referencia Neonix */
+  --bg-dark-deep: #060910;    /* Azul casi negro */
+  --bg-gradient-center: #101a2b; 
+  --text-soft: #94a3b8;
+  --white-pure: #ffffff;
   --nav-height: 80px;
-  --white: #ffffff;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-/* NAVBAR MODERNO (OVERLAY) */
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+  /* Evita saltos visuales en el renderizado */
+  background-color: var(--bg-dark-deep);
+}
+
+body {
+  text-rendering: optimizeSpeed;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-dark-deep);
+  color: var(--white-pure);
+  margin: 0;
+}
+
+/* ==========================================================================
+   SCROLLBAR & SELECTION (PERSONALIZADO)
+   ========================================================================== */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--secondary);
+  border-radius: 10px;
+  border: 2px solid var(--bg-dark-deep);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Resaltado de texto con color de marca */
+::selection {
+  background-color: rgba(227, 6, 19, 0.3);
+  color: white;
+}
+
+/* ==========================================================================
+   NAVBAR (OPTIMIZADO)
+   ========================================================================== */
 .nav-wrapper {
   position: fixed;
   top: 0;
   width: 100%;
   z-index: 1000;
   padding: 15px 20px;
-  background: transparent; /* Permite ver el Hero debajo */
+  /* Aislamiento de capa para scroll fluido */
+  transform: translateZ(0);
 }
 
 .modern-nav {
   max-width: 1300px;
   margin: 0 auto;
   height: var(--nav-height);
-  background: rgba(255, 255, 255, 0.05); /* Cristal oscuro */
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px); /* Reducido ligeramente para ganar FPS */
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 30px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  overflow: hidden;
 }
 
 .nav-logo-zone {
-  display: flex;
-  align-items: center;
-  position: relative; /* Crea un marco de referencia */
-  width: 120px;       /* Reserva un espacio fijo para que no empuje las pestañas */
+  width: 120px;
   height: 100%;
+  position: relative;
 }
 
 .nav-logo-img {
-  height: 120px;       /* Aumenta el tamaño a tu gusto (antes era 50px) */
-  position: absolute; /* Clave: sale del flujo normal para no mover nada */
+  height: 120px;
+  position: absolute;
   top: 50%;
   left: 0;
-  transform: translateY(-50%); /* Lo centra verticalmente */
-  z-index: 10;        /* Se asegura de estar por encima del fondo */
-  filter: drop-shadow(0 2px 10px rgba(0,0,0,0.1)); /* Opcional: le da relieve */
+  transform: translateY(-50%);
+  filter: drop-shadow(0 2px 10px rgba(0,0,0,0.1));
 }
 
 .nav-tabs-wrapper {
   display: flex;
   height: 100%;
   align-items: center;
-  padding-right: 5%;
+  margin-right: 5%;
 }
 
 .tab-item {
-  position: relative;
   padding: 0 25px;
   height: 100%;
   display: flex;
@@ -72,185 +116,210 @@
   font-weight: 600;
   font-size: 0.9rem;
   transform: skew(-15deg); 
-  margin: 0 2px;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: all 0.3s ease;
 }
 
-.tab-item span {
-  transform: skew(15deg);
-}
+.tab-item span { transform: skew(15deg); display: inline-block; }
 
-/* Colores de las pestañas (Degradado Azul Sanidad) */
-.tab-item:nth-child(1) { background: rgba(255, 255, 255, 0.1); }
-.tab-item:nth-child(2) { background: rgba(0, 86, 143, 0.2); }
-.tab-item:nth-child(3) { background: rgba(0, 86, 143, 0.4); }
-.tab-item:nth-child(4) { background: rgba(0, 86, 143, 0.6); }
+.tab-item:nth-child(1) { background: rgba(255, 255, 255, 0.05); }
+.tab-item:nth-child(2) { background: rgba(0, 86, 143, 0.15); }
+.tab-item:nth-child(3) { background: rgba(0, 86, 143, 0.3); }
+.tab-item:nth-child(4) { background: rgba(0, 86, 143, 0.45); }
 .tab-item:nth-child(5) { background: var(--secondary); color: white; }
 
-.tab-item:hover {
-  filter: brightness(1.2);
-  color: white;
+.tab-item:hover { filter: brightness(1.2); color: white; }
+
+
+
+
+
+/* ==========================================================================
+   HERO (ULTRA-OPTIMIZADO)
+   ========================================================================== */
+.hero-fullscreen {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Mantiene el contenedor centrado en pantalla */
+  overflow: hidden;
+  contain: strict;
 }
 
-.nav-auth-zone {
+/* --- CONTENEDOR FLEX: ESTO SEPARA IZQ Y DERECHA --- */
+.hero-container {
+  position: relative;
+  z-index: 10;
+  max-width: 1400px;
+  width: 100%;
   display: flex;
+  flex-direction: row;       /* Fuerza la alineación horizontal */
+  align-items: center;
+  justify-content: space-between; /* Envía el texto a la izq y el mockup a la derecha */
+  padding: 0 8%;
+  gap: 40px;
+  pointer-events: none; 
+}
+
+/* --- FONDO LAVA LAMP --- */
+.lava-lamp-bg {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 1;
+  filter: blur(80px);
+  pointer-events: none;
+  transform: translate3d(0,0,0);
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.25;
+  will-change: transform;
+  animation: moveLava 30s infinite alternate ease-in-out;
+}
+
+.blob-1 { width: 600px; height: 600px; background: var(--secondary); top: -10%; left: -5%; animation: moveLava 22s infinite alternate ease-in-out; }
+.blob-2 { width: 450px; height: 450px; background: var(--primary); bottom: -5%; right: 5%; animation: moveLava 28s infinite alternate ease-in-out; animation-delay: -4s; }
+.blob-3 { width: 400px; height: 400px; background: #1e3a8a; top: 30%; right: 25%; animation: moveLava 25s infinite alternate ease-in-out; animation-delay: -7s; }
+
+@keyframes moveLava {
+  0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  50% { transform: translate3d(60px, -30px, 0) scale(1.08) rotate(2deg); }
+  100% { transform: translate3d(-30px, 60px, 0) scale(0.95) rotate(-2deg); }
+}
+
+/* ==========================================================================
+   HERO CONTENT - IZQUIERDA
+   ========================================================================== */
+.hero-content-side {
+  flex: 0 0 55%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0; 
+  pointer-events: auto;
+}
+
+.title-sm {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--secondary);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-bottom: -15px; 
+  opacity: 0.9;
+}
+
+.hero-logo-img {
+  height: 220px; 
+  width: auto;
+  margin-bottom: 0px; 
+  margin-top: 20px;
+  margin-left: 0px;   
+  filter: drop-shadow(0 15px 40px rgba(0, 0, 0, 0.4));
+  object-fit: contain;
+  pointer-events: none; 
+  backface-visibility: hidden;
+  transition: transform 0.3s ease;
+}
+
+.hero-logo-img:hover { transform: scale(1.02); }
+
+.hero-description {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: #cbd5e1;
+  max-width: 480px; 
+  border-left: 4px solid var(--primary);
+  padding-left: 25px;
+  margin-bottom: 45px;
+  text-align: left;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 30px;
   align-items: center;
 }
 
 .btn-portal {
   background: var(--primary);
   color: white;
-  border: none;
-  padding: 10px 22px;
-  border-radius: 12px;
+  padding: 18px 40px;
+  border-radius: 14px;
   font-weight: 700;
-  font-size: 0.85rem;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  border: none;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(227, 6, 19, 0.2);
-  transition: background 0.2s;
+  box-shadow: 0 8px 25px rgba(227, 6, 19, 0.4);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .btn-portal:hover {
-  background: var(--primary-hover);
-}
-
-.nav-accent-line {
-  height: 3px;
-  max-width: 600px;
-  margin: 8px auto 0;
-  background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), transparent);
-  border-radius: 10px;
-  opacity: 0.6;
-}
-
-
-
-
-
-
-/* HERO 100VH */
-.hero-fullscreen {
-  height: 100vh;
-  width: 100%;
-  position: relative;
-  background-color: var(--dark-bg); 
-  display: flex;
-  flex-direction: column;
-  color: white;
-  margin-top: 0; 
-  overflow: hidden;
-}
-
-.hero-split {
-  flex: 1;
-  display: flex;
-  position: relative;
-}
-
-.hero-left {
-  flex: 0 0 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 80px;
-  padding-top: 100px; /* Espacio para el Nav flotante */
-  position: relative;
-  z-index: 2;
-}
-
-.hero-title {
-  font-size: 5.5rem;
-  line-height: 0.85;
-  letter-spacing: -4px;
-  margin-bottom: 25px;
-}
-
-.title-sm {
-  font-size: 1.8rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.5);
-  letter-spacing: 2px;
-  display: block;
-  margin-bottom: 10px;
-}
-
-.title-plus {
-  font-weight: 900;
-  color: white;
-  text-transform: uppercase;
-  background: linear-gradient(to bottom, #fff 40%, var(--primary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.hero-description {
-  font-size: 1rem;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 40px;
-  max-width: 450px;
-}
-
-.hero-buttons {
-  display: flex;
-  align-items: center;
-  gap: 25px;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(227, 6, 19, 0.6);
+  background-color: var(--primary-hover);
 }
 
 .btn-discover {
-  background: var(--primary);
-  border: none;
-  color: white;
-  padding: 16px 35px;
-  border-radius: 50px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
-}
-
-.btn-discover:hover {
-  background: var(--primary-hover);
-  transform: translateY(-2px);
-}
-
-.link-connect {
-  color: white;
+  color: var(--white-pure);
   text-decoration: none;
   font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.icon-discord-mock {
-  width: 12px;
-  height: 12px;
-  background-color: var(--primary);
-  border-radius: 50%;
-  box-shadow: 0 0 10px var(--primary);
-}
-
-.hero-right {
-  flex: 0 0 50%;
+  font-size: 1rem;
   position: relative;
-  background-image: url('/path/to/tu/imagen/sanitaria.jpg');
-  background-size: cover;
-  background-position: center;
+  transition: color 0.3s ease;
+  padding: 4px 0; /* Añadimos un poco de espacio para que la barra no pegue a las letras */
 }
 
-.conceptual-overlay {
+.btn-discover::after {
+  content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    135deg,
-    var(--dark-bg) 10%,
-    rgba(0, 86, 143, 0.3) 50%,
-    rgba(227, 6, 19, 0.1) 100%
-  );
+  bottom: 0; 
+  left: 0; 
+  width: 0; /* Cambiado de 30% a 0 para que sea invisible al inicio */
+  height: 2px;
+  background: var(--primary);
+  transition: width 0.3s ease; /* Esto crea el efecto de expansión */
 }
+
+/* Al hacer hover, la barra se expande al 100% */
+.btn-discover:hover::after { 
+  width: 100%; 
+}
+
+/* ==========================================================================
+   HERO MOCKUP - DERECHA
+   ========================================================================== */
+.hero-mockup-side {
+  flex: 0 0 40%;
+  display: flex;
+  justify-content: flex-end; /* Lo pega a la derecha */
+  pointer-events: auto;
+}
+
+.mockup-img-wrapper {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 40px;
+  padding: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+  transform: translateZ(0);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+}
+
+
+
+
+
 
 /* BARRA INFERIOR */
 .hero-bottom-bar {
@@ -342,4 +411,295 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 25px;
+}
+
+
+
+
+
+
+/* ==========================================================================
+   FOOTER - ESPECIAL TFG (ESTÁTICO Y ACADÉMICO)
+   ========================================================================== */
+
+.modern-footer {
+  position: relative;
+  width: 100%;
+  background-color: var(--bg-dark-deep); 
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 80px 8% 40px 8%;
+  margin-top: 80px;
+  z-index: 10;
+  overflow: hidden;
+}
+
+/* Blobs Estáticos (Sin animación para no distraer en la lectura final) */
+.modern-footer .lava-lamp-bg {
+  z-index: 1;
+  filter: blur(120px);
+  opacity: 0.6;
+}
+
+.modern-footer .blob-footer-1 {
+  width: 600px; height: 400px;
+  background: var(--secondary);
+  top: -10%; left: -5%;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.modern-footer .blob-footer-2 {
+  width: 400px; height: 400px;
+  background: var(--primary);
+  bottom: -10%; right: -5%;
+  border-radius: 50%;
+  position: absolute;
+}
+
+/* --- CONTENEDOR TFG --- */
+.footer-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 80px;
+  position: relative;
+  z-index: 5;
+}
+
+.footer-logo-img {
+  height: 55px; /* Un poco más pequeño y elegante */
+  width: auto;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 5px 15px rgba(0,0,0,0.4));
+  opacity: 0.9;
+}
+
+.footer-tagline {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  max-width: 320px;
+}
+
+.footer-links-col h4 {
+  color: var(--white-pure);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 2px solid var(--primary);
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+.footer-links-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-links-list a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.footer-links-list a:hover {
+  color: var(--white-pure);
+  transform: translateX(4px);
+}
+
+/* --- SECCIÓN AUTORÍA --- */
+.footer-author-info {
+  margin-top: 15px;
+  font-size: 0.85rem;
+  color: var(--white-pure);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.footer-author-info span {
+  color: var(--text-soft);
+}
+
+.footer-bottom {
+  max-width: 1400px;
+  margin: 60px auto 0 auto;
+  padding-top: 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (PC, TABLET, MÓVIL) - VERSIÓN FINAL UNIFICADA
+   ========================================================================== */
+
+/* --- TABLETS (Hasta 1024px) --- */
+@media (max-width: 1024px) {
+  /* Hero Section */
+  .hero-fullscreen {
+    height: auto; 
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    contain: none; 
+    overflow: visible;
+  }
+
+  .hero-container {
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: center;
+    gap: 40px;
+    padding: 140px 5% 80px 5%;
+    height: auto;
+    min-height: 100vh;
+    pointer-events: auto;
+  }
+
+  .hero-content-side {
+    flex: 0 0 auto;
+    align-items: center;
+    width: 100%;
+  }
+
+  .hero-description {
+    text-align: center;
+    border-left: none;
+    border-bottom: 4px solid var(--primary);
+    padding-left: 0;
+    padding-bottom: 20px;
+    max-width: 600px;
+    margin: 0 auto 40px auto;
+  }
+
+  .hero-mockup-side {
+    flex: 0 0 auto;
+    justify-content: center;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .mockup-img-wrapper {
+    max-width: 80%;
+  }
+
+  /* --- FOOTER TFG RESPONSIVE --- */
+  .footer-container {
+    grid-template-columns: 1fr; 
+    gap: 40px;
+    text-align: center;
+  }
+  
+  .footer-info-col {
+    grid-column: span 1;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* AQUÍ ESTÁ LA CLASE QUE FALTABA */
+  .footer-tagline {
+    max-width: 500px; /* Evita que el texto del TFG se estire demasiado */
+    margin: 0 auto;   /* Lo centra horizontalmente */
+    font-size: 0.9rem;
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+
+  .footer-author-info {
+    align-items: center;
+    margin-top: 25px;
+    text-align: center;
+  }
+
+  .footer-links-list {
+    align-items: center;
+  }
+
+  .footer-links-col h4 {
+    display: inline-block;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+  }
+}
+
+/* --- MÓVILES GRANDES (Hasta 768px) --- */
+@media (max-width: 768px) {
+  .modern-nav {
+    padding: 0 15px;
+    height: 70px;
+  }
+
+  .tab-item:not(:last-child) {
+    display: none; 
+  }
+
+  .hero-logo-img {
+    height: 140px;
+    margin-bottom: 10px;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+    gap: 15px;
+    margin: 0 auto;
+  }
+
+  /* Ajuste específico de la descripción en móvil */
+  .footer-tagline {
+    max-width: 90%; 
+    font-size: 0.85rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .footer-legal-links {
+    justify-content: center;
+  }
+}
+
+/* --- MÓVILES PEQUEÑOS (Hasta 480px) --- */
+@media (max-width: 480px) {
+  .hero-container {
+    padding-top: 120px;
+  }
+
+  .hero-description {
+    font-size: 0.95rem;
+  }
+
+  /* Blobs */
+  .blob-1, .blob-footer-1 { width: 220px; height: 220px; }
+  .blob-2, .blob-footer-2 { width: 180px; height: 180px; }
 }
