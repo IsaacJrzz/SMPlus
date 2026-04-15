@@ -1680,7 +1680,6 @@ html, body {
   list-style: none !important;
   padding: 0;
   margin: 0;
-  margin-top: 20%;
   overflow: hidden; /* Evita cualquier desvío por scroll interno */
 }
 
