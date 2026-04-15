@@ -2,63 +2,79 @@ import React from 'react';
 import '../styles/App.css';
 
 const About = () => {
+  const commitmentData = [
+    { 
+      title: "Accesibilidad", 
+      text: "Rediseño basado en la reducción de la carga cognitiva, facilitando la navegación para usuarios en crisis o con estrés visual." 
+    },
+    { 
+      title: "Interfaz SM+", 
+      text: "Evolución de la plataforma tradicional hacia un ecosistema digital intuitivo, centralizando servicios médicos clave." 
+    },
+    { 
+      title: "Salud Mental", 
+      text: "Enfoque prioritario en la calma y la seguridad, eliminando elementos distractores que generan ansiedad en el paciente." 
+    }
+  ];
+
+  const differenceData = [
+    { 
+      title: "Validación Real", 
+      text: "Proyecto respaldado por una investigación exhaustiva sobre las carencias del sistema sanitario actual en Madrid." 
+    },
+    { 
+      title: "Diseño Atómico", 
+      text: "Estructura modular escalable que permite una experiencia consistente tanto en móvil como en escritorio." 
+    },
+    { 
+      title: "Impacto Social", 
+      text: "Buscamos democratizar el acceso a la salud mental, haciendo que la tecnología sea un puente y no una barrera." 
+    }
+  ];
+
   return (
-    <section id="about" className="about-section">
-      <div className="container">
-        {/* Encabezado de la sección */}
-        <div className="about-header">
-          <h2 className="features-title">Sobre el <em>Proyecto</em></h2>
-          <p className="features-subtitle">
-            Una iniciativa nacida para transformar la gestión de la salud mental 
-            a través de la tecnología y el diseño centrado en el usuario.
-          </p>
-        </div>
-
-        {/* Grid de información (puedes reusar la clase features-bento) */}
-        <div className="features-bento">
-          
-          {/* Bloque 1: El Origen (Grande) */}
-          <div className="bento-item bento-large">
-            <div className="bento-content">
-              <span className="bento-tag">Origen</span>
-              <h3>¿Por qué SM+?</h3>
-              <p>
-                Este proyecto surge como Trabajo de Fin de Grado (TFG) con el objetivo 
-                de modernizar la interfaz actual de SaludMadrid, enfocándonos 
-                específicamente en la accesibilidad y la reducción del estrés visual 
-                para pacientes de salud mental.
-              </p>
-            </div>
-          </div>
-
-          {/* Bloque 2: La Misión */}
-          <div className="bento-item bento-medium">
-            <div className="bento-content">
-              <span className="bento-tag">Misión</span>
-              <h3>Nuestro Objetivo</h3>
-              <p>
-                Centralizar herramientas críticas en una plataforma intuitiva que 
-                aporte calma, seguridad y eficiencia tanto a pacientes como a profesionales.
-              </p>
-            </div>
-          </div>
-
-          {/* Bloque 3: Tecnología */}
-          <div className="bento-item bento-small">
-            <div className="bento-content">
-              <span className="bento-tag">Stack</span>
-              <h3>Tecnología</h3>
-              <p>
-                Desarrollado con React, CSS3 Moderno y un enfoque Mobile-First.
-              </p>
-            </div>
+    <section id="proyecto" className="about-section">
+      {/* FILA 1: EL COMPROMISO ACADÉMICO */}
+      <div className="about-row dark-row">
+        <div className="about-content">
+          <h2 className="section-title">Nuestro <span>Compromiso</span></h2>
+          <div className="about-grid">
+            {commitmentData.map((item, index) => (
+              <div key={index} className="about-card">
+                <div className="icon-sphere blue"></div>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </div>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Footer del About: Un pequeño tagline académico */}
-        <p className="footer-tagline" style={{ marginTop: '40px', opacity: 0.7 }}>
-          Proyecto desarrollado por Isaac Alonso e Iker Domínguez. © 2024
-        </p>
+      {/* FILA 2: BANNER DEL TFG (Vuestra Autoría) */}
+      <div className="about-banner">
+        <div className="banner-overlay">
+          <span className="banner-tag">TRABAJO DE FIN DE GRADO</span>
+          <h2 className="banner-title">Salud Madrid Plus</h2>
+          <p className="banner-desc">Innovación tecnológica aplicada al bienestar ciudadano.</p>
+          <div className="banner-line"></div>
+          <p className="banner-author">Desarrollado por Isaac Alonso e Iker Domínguez</p>
+        </div>
+      </div>
+
+      {/* FILA 3: LA DIFERENCIA DEL PROYECTO */}
+      <div className="about-row light-row">
+        <div className="about-content">
+          <h2 className="section-title">¿Por qué <span>SM+</span>?</h2>
+          <div className="about-grid">
+            {differenceData.map((item, index) => (
+              <div key={index} className="about-card">
+                <div className="icon-sphere red"></div>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
