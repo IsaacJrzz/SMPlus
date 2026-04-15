@@ -26,7 +26,7 @@ function App() {
 
         {/* SECCIÓN SERVICIOS (Espacio reservado) */}
         <div id="servicios">
-          /* <Servicios /> */
+           <Servicios />
         </div>
 
         {/* SECCIÓN PROYECTO */}

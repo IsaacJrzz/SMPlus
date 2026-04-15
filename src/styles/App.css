@@ -1430,6 +1430,182 @@ body {
 }
 
 
+/* ==========================================================================
+   SERVICIOS - DISEÑO PREMIUM "HI-TECH" (VERSIÓN INTEGRAL)
+   ========================================================================== */
+
+.services-section {
+  padding: 140px 5%;
+  background-color: #03070a; /* Fondo ultra oscuro para resaltar el cristal */
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(0, 86, 143, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(227, 6, 19, 0.05) 0px, transparent 50%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Encabezado con tus clases de títulos */
+.services-header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.features-title em {
+  font-style: normal;
+  color: var(--primary); /* Tu variable roja */
+  text-shadow: 0 0 20px rgba(227, 6, 19, 0.4);
+}
+
+.features-subtitle {
+  color: #94a3b8;
+  max-width: 700px;
+  margin: 20px auto 0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* Grid de servicios */
+.services-simple-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 35px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* TARJETA ESTILO CRISTAL */
+.service-simple-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 35px;
+  padding: 55px 40px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Efecto de luz interna al pasar el ratón */
+.service-simple-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle at top left, rgba(0, 86, 143, 0.2) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.service-simple-card:hover {
+  transform: translateY(-15px);
+  border-color: var(--primary); /* El rojo ilumina el borde */
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 
+              0 0 20px rgba(227, 6, 19, 0.2);
+}
+
+.service-simple-card:hover::before {
+  opacity: 1;
+}
+
+/* CONTENEDOR DE ICONOS SVG */
+.service-icon-box {
+  width: 75px;
+  height: 75px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  transition: all 0.4s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.service-icon-box svg {
+  width: 32px;
+  height: 32px;
+  color: #fff;
+  transition: all 0.4s ease;
+}
+
+.service-simple-card:hover .service-icon-box {
+  background: rgba(227, 6, 19, 0.1);
+  border-color: rgba(227, 6, 19, 0.3);
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.service-simple-card:hover .service-icon-box svg {
+  color: var(--primary);
+  filter: drop-shadow(0 0 10px rgba(227, 6, 19, 0.5));
+}
+
+/* TEXTOS DE LA TARJETA */
+.service-simple-card h3 {
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  position: relative;
+  z-index: 2;
+  letter-spacing: -0.5px;
+}
+
+.service-simple-card p {
+  color: #94a3b8;
+  line-height: 1.8;
+  font-size: 1.05rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* ==========================================================================
+   RESPONSIVE SERVICIOS
+   ========================================================================== */
+
+@media (max-width: 1100px) {
+  .services-simple-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .services-section {
+    padding: 100px 20px;
+  }
+
+  .features-title {
+    font-size: 2.2rem;
+  }
+
+  .services-simple-grid {
+    grid-template-columns: 1fr; /* Una columna en móvil */
+    gap: 25px;
+  }
+
+  .service-simple-card {
+    padding: 45px 30px;
+    text-align: center; /* Centramos el contenido en móvil */
+    align-items: center;
+  }
+}
+
+/* Animación sutil para que los iconos no se vean estáticos */
+@keyframes pulse-icon {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.service-simple-card:hover .service-icon-box svg {
+  animation: pulse-icon 2s infinite ease-in-out;
+}
+
+
 
 
 
