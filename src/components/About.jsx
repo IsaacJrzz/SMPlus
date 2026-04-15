@@ -37,7 +37,7 @@ const About = () => {
       {/* FILA 1: EL COMPROMISO ACADÉMICO */}
       <div className="about-row dark-row">
         <div className="about-content">
-          <h2 className="section-title">Nuestro <span>Compromiso</span></h2>
+          <h2 className="features-title">Nuestro <em>Compromiso</em></h2>
           <div className="about-grid">
             {commitmentData.map((item, index) => (
               <div key={index} className="about-card">
@@ -64,7 +64,7 @@ const About = () => {
       {/* FILA 3: LA DIFERENCIA DEL PROYECTO */}
       <div className="about-row light-row">
         <div className="about-content">
-          <h2 className="section-title">¿Por qué <span>SM+</span>?</h2>
+          <h2 className="features-title">¿Por qué <em>SM+</em>?</h2>
           <div className="about-grid">
             {differenceData.map((item, index) => (
               <div key={index} className="about-card">
