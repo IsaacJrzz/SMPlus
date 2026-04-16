@@ -32,8 +32,7 @@ const Hero = () => {
     }, 60000);
   }, []);
 
-  // Cuando el usuario interactúa con el iframe, la ventana pierde el foco
-  // → aprovechamos ese evento para resetear el timer de inactividad
+  // Cuando el usuario interactúa con el iframe
   useEffect(() => {
     if (!interacted) return;
     const handleBlur = () => startInactivityTimer();
@@ -56,7 +55,7 @@ const Hero = () => {
 
   return (
     <section className="hero-fullscreen">
-      {/* CAPA ANIMADA DE FONDO TIPO LÁMPARA DE LAVA */}
+      {/* CAPA ANIMADA DE FONDO */}
       <div className="lava-lamp-bg">
         <div className="blob blob-1"></div>
         <div className="blob blob-2"></div>
@@ -69,8 +68,9 @@ const Hero = () => {
           <span className="title-sm">El futuro de la gestión sanitaria</span>
 
           <div className="hero-logo-wrapper">
+            {/* CORRECCIÓN: Quitamos / inicial */}
             <img
-              src="/logo-hero.png"
+              src="logo-hero.png" 
               alt="Logo SM+"
               className="hero-logo-img"
             />
@@ -91,26 +91,22 @@ const Hero = () => {
         {/* LADO DERECHO: MOCKUP DE LA APP */}
         <div className="hero-mockup-side">
           <div className="phone-float-wrapper">
-            {/* BISEL DEL TELÉFONO */}
             <div className="phone-bezel">
-              {/* Zona superior: Dynamic Island */}
               <div className="phone-notch">
                 <div className="phone-dynamic-island"></div>
               </div>
 
-              {/* Pantalla (iframe escalado) */}
+              {/* Pantalla (iframe) */}
               <div className="phone-screen-clip">
+                {/* CORRECCIÓN: Quitamos / inicial para que cargue el prototipo en GitHub Pages */}
                 <iframe
-                  src="/SaludMadrid_Prototipo_v3.html"
+                  src="SaludMadrid_Prototipo_v3.html"
                   className="phone-embed"
                   title="SaludMadrid+ App"
                   scrolling="no"
                   frameBorder="0"
                 />
 
-                {/* Click-catcher: div transparente sobre el iframe que detecta
-                    el primer toque. Al interactuar se desmonta, dejando el
-                    iframe libre para recibir todos los eventos. */}
                 {!interacted && (
                   <div
                     className="phone-click-catcher"
@@ -118,7 +114,6 @@ const Hero = () => {
                   />
                 )}
 
-                {/* Ripple visual — pointer-events:none para no bloquear nada */}
                 {!interacted && (
                   <div
                     className={`phone-tap-overlay${showRipple ? " is-rippling" : ""}`}
@@ -129,11 +124,9 @@ const Hero = () => {
                 )}
               </div>
 
-              {/* Barra home inferior */}
               <div className="phone-home-bar"></div>
             </div>
 
-            {/* Badge flotante — desaparece al interactuar, vuelve tras 60s */}
             {!interacted && (
               <div className="phone-hint-group">
                 <div className="phone-pruebalo-badge">

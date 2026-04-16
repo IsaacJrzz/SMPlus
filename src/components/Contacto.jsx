@@ -7,7 +7,8 @@ const Contacto = () => {
     {
       nombre: "Isaac",
       rol: "Desarrollo Full Stack",
-      img: "/isaac.jpeg",
+      // Quitamos la barra inicial para que sea ruta relativa
+      img: "isaac.jpeg", 
       correo: "isaacalonsojrz@gmail.com",
       linkedin: "https://www.linkedin.com/in/isaacalonsojuarez/",
       github: "https://github.com/IsaacJrzz"
@@ -15,7 +16,8 @@ const Contacto = () => {
     {
       nombre: "Iker",
       rol: "Desarrollo Full Stack",
-      img: "/iker.png",
+      // Quitamos la barra inicial para que sea ruta relativa
+      img: "iker.png", 
       correo: "ikerdc2005@gmail.com",
       linkedin: "https://www.linkedin.com/in/iker-dom%C3%ADnguez-calcerrada-423736298/",
       github: "https://github.com/dominguezz05"
@@ -26,7 +28,7 @@ const Contacto = () => {
     <section id="contacto" className="contacto-section">
       <div className="contacto-container">
         
-        {/* PARTE SUPERIOR: Grid de Autores (Isaac a la izquierda, Iker a la derecha) */}
+        {/* PARTE SUPERIOR: Grid de Autores */}
         <div className="team-container">
           <h2 className="features-title">Hablemos de <em>Innovación</em></h2>
           <p className="features-subtitle">
