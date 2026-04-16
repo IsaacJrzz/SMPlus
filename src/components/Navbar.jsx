@@ -8,7 +8,7 @@ const Navbar = () => {
     <header className="nav-wrapper">
       <nav className="modern-nav">
         <div className="nav-logo-zone">
-          <img src="/logo.png" alt="SM+" className="nav-logo-img" />
+          <img src="logo.png" alt="SM+" className="nav-logo-img" />
         </div>
 
         {/* Botón Hamburguesa Simple */}
