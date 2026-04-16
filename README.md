@@ -82,6 +82,4 @@ El proyecto destaca por una interfaz disruptiva y profesional inspirada en las i
 
 ---
 
-*Este proyecto es de carácter educativo y no es una aplicación oficial de la Comunidad de Madrid.*
-
-code .
+*Este proyecto es de carácter educativo y no es una aplicación oficial de la Comunidad de Madrid.
