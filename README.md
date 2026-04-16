@@ -1,4 +1,4 @@
-# SM+ (Salud Madrid Plus) 🏥 — [TFG Edition]
+# SM+ (Salud Madrid Plus) — [TFG Edition]
 
 
 
